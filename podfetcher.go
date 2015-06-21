@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/gregf/podfetcher/lib"
 
 func main() {
-	fmt.Println("Hello World!")
+	podfetcher.Execute()
 }
