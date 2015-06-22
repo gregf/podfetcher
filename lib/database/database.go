@@ -31,9 +31,23 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.CreateTable(&Podcast{})
-	db.CreateTable(&Episode{})
+
+	if !dbexists(database) {
+		db.CreateTable(&Podcast{})
+		db.CreateTable(&Episode{})
+	}
 	db.AutoMigrate(&Podcast{}, &Episode{})
+}
+
+func dbexists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
 func DBSession() (db gorm.DB, err error) {
@@ -43,6 +57,52 @@ func DBSession() (db gorm.DB, err error) {
 	}
 
 	return sqliteSession, err
+}
+
+func SetDownloadedByUrl(url string) {
+	db, err := DBSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db.Table("episodes").Where("enclosure_url = ?", url).UpdateColumn("downloaded", true)
+}
+
+func FindTitleByUrl(url string) (title string) {
+	db, err := DBSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var podcastId int
+	row := db.Table("episodes").Where("enclosure_url = ?", url).Select("podcast_id").Row()
+	row.Scan(&podcastId)
+
+	prow := db.Table("podcasts").Where("id = ?", podcastId).Select("title").Row()
+	prow.Scan(&title)
+
+	return title
+}
+
+func FindNewEpisodes() (urls []string, err error) {
+	db, err := DBSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var total_count int
+	rows, err := db.Table("episodes").Where("downloaded = ?",
+		false).Select("enclosure_url").Count(&total_count).Rows()
+	defer rows.Close()
+
+	urls = make([]string, 0, total_count)
+	for rows.Next() {
+		var enclosure_url string
+		rows.Scan(&enclosure_url)
+		urls = append(urls, enclosure_url)
+	}
+
+	return urls, err
 }
 
 func findPodcastID(rssurl string) (podcastId int) {

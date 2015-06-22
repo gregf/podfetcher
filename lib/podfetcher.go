@@ -19,8 +19,17 @@ func Execute() {
 		},
 	}
 
+	var cmdFetch = &cobra.Command{
+		Use:   "fetch",
+		Short: "Fetches podcast episodes that have not been downloaded.",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.Fetch()
+		},
+	}
+
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
 	rootCmd.AddCommand(cmdUpdate)
+	rootCmd.AddCommand(cmdFetch)
 	rootCmd.Execute()
 }
 

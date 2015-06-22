@@ -49,7 +49,13 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	var maxEpisodes = viper.GetInt("episodes")
 	items := newitems[0:maxEpisodes]
 	for _, item := range items {
-		database.AddItem(item.Title, f.Url, item.Enclosures[0].Url)
+		var enclosureUrl string
+		if strings.Contains(f.Url, "youtube.com") {
+			enclosureUrl = item.Links[0].Href
+		} else {
+			enclosureUrl = item.Enclosures[0].Url
+		}
+		database.AddItem(item.Title, f.Url, enclosureUrl)
 	}
 }
 
