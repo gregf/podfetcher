@@ -47,13 +47,28 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	database.AddPodcast(ch.Title, f.Url)
 
 	var maxEpisodes = viper.GetInt("episodes")
-	items := newitems[0:maxEpisodes]
+	var items []*rss.Item
+	if len(newitems) < maxEpisodes {
+		items = newitems[0:len(newitems)]
+	} else {
+		items = newitems[0:maxEpisodes]
+	}
 	for _, item := range items {
 		var enclosureUrl string
 		if strings.Contains(f.Url, "youtube.com") {
-			enclosureUrl = item.Links[0].Href
+			if len(item.Links) > 0 {
+				enclosureUrl = item.Links[0].Href
+			} else {
+				log.Printf("item %s has no enclosure url", item.Title)
+				return
+			}
 		} else {
-			enclosureUrl = item.Enclosures[0].Url
+			if len(item.Enclosures) > 0 {
+				enclosureUrl = item.Enclosures[0].Url
+			} else {
+				log.Printf("item %s has no enclosure url", item.Title)
+				return
+			}
 		}
 		database.AddItem(item.Title, f.Url, enclosureUrl)
 	}
