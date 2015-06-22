@@ -36,6 +36,15 @@ func download(url string) {
 	database.SetDownloadedByUrl(url)
 }
 
+func run(cmdName string, cmdArgs []string) {
+	cmd := exec.Command(cmdName, cmdArgs...)
+	cmdOut, err := cmd.Output()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(cmdOut))
+}
+
 func wget(url string) {
 	title := makeTitle(database.FindTitleByUrl(url))
 	saveLoc := filepath.Join(viper.GetString("download"), title, getFileName(url, false))
@@ -43,12 +52,9 @@ func wget(url string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	wgetCmd := exec.Command("wget", "-c", url, "-O", saveLoc)
-	wgetOut, err := wgetCmd.Output()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(wgetOut))
+	cmdName := "wget"
+	cmdArgs := []string{"-c", url, "-O", saveLoc}
+	run(cmdName, cmdArgs)
 }
 
 func ytdl(url string) {
@@ -58,13 +64,9 @@ func ytdl(url string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	ytdlCmd := exec.Command("youtube-dl", "--no-playlist", "--continue", "--no-part", "-f", viper.GetString("youtube-quality"), "-o", saveLoc, url)
-
-	ytdlOut, err := ytdlCmd.Output()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(ytdlOut))
+	cmdName := "youtube-dl"
+	cmdArgs := []string{"--no-playlist", "--continue", "--no-part", "-f", viper.GetString("youtube-quality"), "-o", saveLoc, url}
+	run(cmdName, cmdArgs)
 }
 
 func getFileName(enclosureUrl string, youtube bool) (filename string) {
