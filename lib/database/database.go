@@ -70,7 +70,19 @@ func SetDownloadedByUrl(url string) {
 	db.Table("episodes").Where("enclosure_url = ?", url).UpdateColumn("downloaded", true)
 }
 
-func FindTitleByUrl(url string) (title string) {
+func FindEpisodeTitleByUrl(url string) (title string) {
+	db, err := DBSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	row := db.Table("episodes").Where("enclosure_url = ?", url).Select("title").Row()
+	row.Scan(&title)
+
+	return title
+}
+
+func FindPodcastTitleByUrl(url string) (title string) {
 	db, err := DBSession()
 	if err != nil {
 		log.Fatal(err)

@@ -22,7 +22,8 @@ func Fetch() {
 	}
 
 	for _, url := range urls {
-		fmt.Printf("Fetching: %s ...\n", url)
+		fmt.Printf("Fetching: %s - %s\n", database.FindPodcastTitleByUrl(url),
+			database.FindEpisodeTitleByUrl(url))
 		download(url)
 	}
 }
@@ -45,7 +46,7 @@ func run(cmdName string, cmdArgs []string) {
 }
 
 func wget(url string) {
-	title := makeTitle(database.FindTitleByUrl(url))
+	title := makeTitle(database.FindPodcastTitleByUrl(url))
 	saveLoc := filepath.Join(viper.GetString("download"), title, getFileName(url, false))
 	err := os.MkdirAll(filepath.Join(viper.GetString("download"), title), 0755)
 	if err != nil {
@@ -57,7 +58,7 @@ func wget(url string) {
 }
 
 func ytdl(url string) {
-	title := makeTitle(database.FindTitleByUrl(url))
+	title := makeTitle(database.FindPodcastTitleByUrl(url))
 	saveLoc := filepath.Join(viper.GetString("download"), title, getFileName(url, true))
 	err := os.MkdirAll(filepath.Join(viper.GetString("download"), title), 0755)
 	if err != nil {
