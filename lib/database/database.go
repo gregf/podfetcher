@@ -32,6 +32,8 @@ func init() {
 		log.Fatal(err)
 	}
 
+	db.LogMode(false)
+
 	if !dbexists(database) {
 		db.CreateTable(&Podcast{})
 		db.CreateTable(&Episode{})
@@ -101,7 +103,6 @@ func FindNewEpisodes() (urls []string, err error) {
 		rows.Scan(&enclosure_url)
 		urls = append(urls, enclosure_url)
 	}
-
 	return urls, err
 }
 
@@ -121,6 +122,7 @@ func AddPodcast(title string, rssurl string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.LogMode(false)
 
 	podcast := Podcast{
 		Title:  title,
@@ -136,6 +138,7 @@ func AddItem(title string, rssurl string, enclosureurl string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.LogMode(false)
 
 	podcastId := findPodcastID(rssurl)
 
