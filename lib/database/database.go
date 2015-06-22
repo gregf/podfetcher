@@ -153,3 +153,13 @@ func AddItem(title string, rssurl string, enclosureurl string) {
 		db.Create(&episode)
 	}
 }
+
+func CatchUp() {
+	db, err := DBSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+	db.LogMode(false)
+
+	db.Table("episodes").Where("downloaded = ?", false).UpdateColumn("downloaded", true)
+}

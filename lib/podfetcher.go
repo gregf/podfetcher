@@ -27,9 +27,15 @@ func Execute() {
 		},
 	}
 
+	var cmdCatchUp = &cobra.Command{
+		Use:   "catchup",
+		Short: "Marks all podcast episodes as downloaded",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.CatchUp()
+		},
+	}
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
-	rootCmd.AddCommand(cmdUpdate)
-	rootCmd.AddCommand(cmdFetch)
+	rootCmd.AddCommand(cmdUpdate, cmdFetch, cmdCatchUp)
 	rootCmd.Execute()
 }
 
