@@ -38,11 +38,10 @@ func download(url string) {
 
 func run(cmdName string, cmdArgs []string) {
 	cmd := exec.Command(cmdName, cmdArgs...)
-	cmdOut, err := cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(cmdOut))
 }
 
 func wget(url string) {
