@@ -5,6 +5,11 @@ set -e
 RELEASE="v$1"
 CURRENT="$(git tag | tail -n1)"
 
+if [ -z "$1" ]; then
+  echo "You must pass a version. Example release.sh 1.0"
+  exit 1
+fi
+
 echo "Installing needed tools..."
 go get github.com/aktau/github-release
 
