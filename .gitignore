@@ -25,3 +25,6 @@ _testmain.go
 
 # binary
 podfetcher
+
+# releases
+podfetcher.tar.bz2

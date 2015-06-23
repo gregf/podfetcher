@@ -30,4 +30,12 @@ github-release release \
 --tag "$RELEASE" \
 --name "podfetcher" \
 --description "$LOG" \
+
+github-release upload \
+--user gregf \
+--repo podfetcher \
+--tag "$RELEASE" \
+--name "podfetcher.tar.bz2" \
 --file "podfetcher.tar.bz2"
+
+rm -f podfetcher.tar.bz2
