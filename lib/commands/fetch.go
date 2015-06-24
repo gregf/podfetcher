@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/lib/database"
-	"github.com/spf13/viper"
 )
 
 var slash = string(os.PathSeparator)

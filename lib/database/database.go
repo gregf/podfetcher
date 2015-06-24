@@ -3,10 +3,10 @@ package database
 import (
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	_ "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/mattn/go-sqlite3"
 )
 
 type Podcast struct {
