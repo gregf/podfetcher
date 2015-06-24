@@ -22,6 +22,7 @@ type Episode struct {
 	Title        string
 	EnclosureUrl string `sql:"unique_index"`
 	Downloaded   bool
+	Guid         string `sql:"unique_index"`
 }
 
 var database = path.Join(os.Getenv("HOME"), "/.podfetcher/cache.db")
@@ -145,7 +146,7 @@ func AddPodcast(title string, rssurl string) {
 	}
 }
 
-func AddItem(title string, rssurl string, enclosureurl string) {
+func AddItem(title string, rssurl string, enclosureurl string, guid string) {
 	db, err := DBSession()
 	if err != nil {
 		log.Fatal(err)
@@ -159,6 +160,7 @@ func AddItem(title string, rssurl string, enclosureurl string) {
 		EnclosureUrl: enclosureurl,
 		Downloaded:   false,
 		PodcastID:    podcastId,
+		Guid:         guid,
 	}
 
 	if db.NewRecord(&episode) {

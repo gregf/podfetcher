@@ -70,7 +70,7 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 				return
 			}
 		}
-		database.AddItem(item.Title, f.Url, enclosureUrl)
+		database.AddItem(item.Title, f.Url, enclosureUrl, *item.Guid)
 	}
 }
 
