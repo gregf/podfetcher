@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"strings"
 
@@ -13,7 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-import ()
+var slash = string(os.PathSeparator)
 
 func Fetch() {
 	urls, err := database.FindNewEpisodes()
@@ -26,6 +27,48 @@ func Fetch() {
 			database.FindEpisodeTitleByUrl(url))
 		download(url)
 	}
+}
+
+func expandPath(path string) string {
+	length := len(path)
+
+	if length == 0 {
+		return path
+	}
+
+	// replace env variables
+	expandedPath := os.ExpandEnv(path)
+
+	// replace ~ with $HOME
+	if (length == 1 && path[0] == '~') || (length > 1 && path[:2] == "~/") {
+		usr, _ := user.Current()
+
+		expandedPath = strings.Replace(expandedPath, "~", usr.HomeDir, 1)
+	} else if path[:1] == "~" {
+		// replace ~user with their $HOME
+
+		firstSlash := strings.Index(path, slash)
+		if firstSlash < 0 {
+			firstSlash = len(path)
+		}
+
+		if firstSlash > 1 {
+			usr, err := user.Lookup(path[1:firstSlash])
+			if err == nil {
+				expandedPath = usr.HomeDir + path[firstSlash:]
+			}
+		}
+	}
+
+	// get an absolute path, ignoring errors
+	if absPath, err := filepath.Abs(expandedPath); err == nil {
+		expandedPath = absPath
+	}
+
+	// cleanup
+	expandedPath = filepath.Clean(expandedPath)
+
+	return expandedPath
 }
 
 func download(url string) {
@@ -47,8 +90,8 @@ func run(cmdName string, cmdArgs []string) {
 
 func wget(url string) {
 	title := makeTitle(database.FindPodcastTitleByUrl(url))
-	saveLoc := filepath.Join(viper.GetString("download"), title, getFileName(url, false))
-	err := os.MkdirAll(filepath.Join(viper.GetString("download"), title), 0755)
+	saveLoc := filepath.Join(expandPath(viper.GetString("download")), title, getFileName(url, false))
+	err := os.MkdirAll(filepath.Join(expandPath(viper.GetString("download")), title), 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
