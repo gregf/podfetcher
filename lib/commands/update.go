@@ -16,6 +16,7 @@ import (
 )
 
 var feedsFile = path.Join(os.Getenv("HOME"), "/.podfetcher/feeds")
+var EnclosureError = "item %s has no enclosure url"
 
 func Update() {
 	feeds, err := readLines(feedsFile)
@@ -59,14 +60,14 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 			if len(item.Links) > 0 {
 				enclosureUrl = item.Links[0].Href
 			} else {
-				log.Printf("item %s has no enclosure url", item.Title)
+				log.Printf(EnclosureError, item.Title)
 				return
 			}
 		} else {
 			if len(item.Enclosures) > 0 {
 				enclosureUrl = item.Enclosures[0].Url
 			} else {
-				log.Printf("item %s has no enclosure url", item.Title)
+				log.Printf(EnclosureError, item.Title)
 				return
 			}
 		}
