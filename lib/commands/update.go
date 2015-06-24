@@ -7,19 +7,27 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
+	rss "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jteeuwen/go-pkg-rss"
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/lib/database"
-	rss "github.com/jteeuwen/go-pkg-rss"
-	"github.com/spf13/viper"
 )
 
-var feedsFile = path.Join(os.Getenv("HOME"), "/.podfetcher/feeds")
 var EnclosureError = "item %s has no enclosure url"
 
+func feedsPath() (path string) {
+	if len(os.Getenv("XDG_CONFIG_HOME")) > 0 {
+		path = filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "podfetcher", "feeds")
+		return path
+	}
+	path = filepath.Join(os.Getenv("HOME"), ".config", "podfatcher", "feeds")
+	return path
+}
+
 func Update() {
-	feeds, err := readLines(feedsFile)
+	feeds, err := readLines(feedsPath())
 	if err != nil {
 		log.Fatalf("readLines: %s", err)
 	}

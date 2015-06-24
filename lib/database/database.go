@@ -25,7 +25,16 @@ type Episode struct {
 	Guid         string `sql:"unique_index"`
 }
 
-var database = path.Join(os.Getenv("HOME"), "/.podfetcher/cache.db")
+func databasePath() (path string) {
+	if len(os.Getenv("XDG_CACHE_HOME")) > 0 {
+		path = filepath.Join(os.Getenv("XDG_CACHE_HOME"), "podfetcher")
+		os.MkdirAll(path, 0755)
+		return filepath.Join(path, "cache.db")
+	}
+	path = filepath.Join(os.Getenv("HOME"), ".cache", "podfatcher")
+	os.MkdirAll(path, 0755)
+	return filepath.Join(path, "cache.db")
+}
 
 func init() {
 	db, err := DBSession()
@@ -35,7 +44,7 @@ func init() {
 
 	db.LogMode(false)
 
-	if !dbexists(database) {
+	if !dbexists(databasePath()) {
 		db.CreateTable(&Podcast{})
 		db.CreateTable(&Episode{})
 	}
@@ -54,7 +63,7 @@ func dbexists(path string) bool {
 }
 
 func DBSession() (db gorm.DB, err error) {
-	sqliteSession, err := gorm.Open("sqlite3", database)
+	sqliteSession, err := gorm.Open("sqlite3", databasePath())
 	if err != nil {
 		log.Fatal(err)
 	}

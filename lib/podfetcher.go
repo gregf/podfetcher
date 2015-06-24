@@ -41,7 +41,9 @@ func Execute() {
 
 func initConfig() {
 	viper.SetConfigName("config")
-	viper.AddConfigPath("$HOME/.podfetcher")
+	viper.AddConfigPath("/etc/podfetcher")
+	viper.AddConfigPath("$HOME/.config/podfetcher")
+	viper.AddConfigPath("$XDG_CONFIG_HOME/podfetcher")
 	viper.SetConfigType("toml")
 
 	err := viper.ReadInConfig()
