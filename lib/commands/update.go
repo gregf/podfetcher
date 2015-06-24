@@ -18,12 +18,7 @@ import (
 var EnclosureError = "item %s has no enclosure url"
 
 func feedsPath() (path string) {
-	if len(os.Getenv("XDG_CONFIG_HOME")) > 0 {
-		path = filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "podfetcher", "feeds")
-		return path
-	}
-	path = filepath.Join(os.Getenv("HOME"), ".config", "podfatcher", "feeds")
-	return path
+	return filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "feeds")
 }
 
 func Update() {
