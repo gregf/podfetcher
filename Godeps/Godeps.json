@@ -13,7 +13,7 @@
 		},
 		{
 			"ImportPath": "github.com/jinzhu/gorm",
-			"Rev": "dbedca4e5fe81ba68969835399c3d0866a260fa3"
+			"Rev": "d35a44c5b123c3a44c95beeff5d0f1f8bce6ed3b"
 		},
 		{
 			"ImportPath": "github.com/jteeuwen/go-pkg-rss",
