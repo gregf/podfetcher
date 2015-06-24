@@ -71,7 +71,12 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 				return
 			}
 		}
-		database.AddItem(item.Title, f.Url, enclosureUrl, *item.Guid)
+		items := make(map[string]string)
+		items["title"] = item.Title
+		items["rssUrl"] = f.Url
+		items["enclosureUrl"] = enclosureUrl
+		items["guid"] = *item.Guid
+		database.AddItem(items)
 	}
 }
 

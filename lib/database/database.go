@@ -146,21 +146,22 @@ func AddPodcast(title string, rssurl string) {
 	}
 }
 
-func AddItem(title string, rssurl string, enclosureurl string, guid string) {
+// item[rssUrl] item[title], item[enclosureUrl] item[guid]
+func AddItem(items map[string]string) {
 	db, err := DBSession()
 	if err != nil {
 		log.Fatal(err)
 	}
 	db.LogMode(false)
 
-	podcastId := findPodcastID(rssurl)
+	podcastId := findPodcastID(items["rssUrl"])
 
 	episode := Episode{
-		Title:        title,
-		EnclosureUrl: enclosureurl,
+		Title:        items["title"],
+		EnclosureUrl: items["enclosureUrl"],
 		Downloaded:   false,
 		PodcastID:    podcastId,
-		Guid:         guid,
+		Guid:         items["guid"],
 	}
 
 	if db.NewRecord(&episode) {
