@@ -16,6 +16,7 @@ import (
 
 var slash = string(os.PathSeparator)
 
+// Fetch loops through episodes where downloaded = false and downloads them.
 func Fetch() {
 	urls, err := database.FindNewEpisodes()
 	if err != nil {
@@ -23,8 +24,8 @@ func Fetch() {
 	}
 
 	for _, url := range urls {
-		fmt.Printf("Fetching: %s - %s\n", database.FindPodcastTitleByUrl(url),
-			database.FindEpisodeTitleByUrl(url))
+		fmt.Printf("Fetching: %s - %s\n", database.FindPodcastTitleByURL(url),
+			database.FindEpisodeTitleByURL(url))
 		download(url)
 	}
 }
@@ -77,7 +78,7 @@ func download(url string) {
 	} else {
 		wget(url)
 	}
-	database.SetDownloadedByUrl(url)
+	database.SetDownloadedByURL(url)
 }
 
 func run(cmdName string, cmdArgs []string) {
@@ -89,7 +90,7 @@ func run(cmdName string, cmdArgs []string) {
 }
 
 func wget(url string) {
-	title := makeTitle(database.FindPodcastTitleByUrl(url))
+	title := makeTitle(database.FindPodcastTitleByURL(url))
 	saveLoc := filepath.Join(expandPath(viper.GetString("download")), title, getFileName(url, false))
 	err := os.MkdirAll(filepath.Join(expandPath(viper.GetString("download")), title), 0755)
 	if err != nil {
@@ -101,7 +102,7 @@ func wget(url string) {
 }
 
 func ytdl(url string) {
-	title := makeTitle(database.FindPodcastTitleByUrl(url))
+	title := makeTitle(database.FindPodcastTitleByURL(url))
 	saveLoc := filepath.Join(viper.GetString("download"), title, getFileName(url, true))
 	err := os.MkdirAll(filepath.Join(viper.GetString("download"), title), 0755)
 	if err != nil {
@@ -112,24 +113,24 @@ func ytdl(url string) {
 	run(cmdName, cmdArgs)
 }
 
-func getFileName(enclosureUrl string, youtube bool) (filename string) {
+func getFileName(enclosureURL string, youtube bool) (filename string) {
 	if youtube {
-		ytdlCmd := exec.Command("youtube-dl", "--get-filename", enclosureUrl)
+		ytdlCmd := exec.Command("youtube-dl", "--get-filename", enclosureURL)
 		ytdlOut, err := ytdlCmd.Output()
 		if err != nil {
 			log.Fatal(err)
 		}
 		filename = string(ytdlOut)
 		return filename
-	} else {
-		url, err := url.Parse(enclosureUrl)
-		if err != nil {
-			log.Fatal(err)
-		}
-		filename = filepath.Base(url.Path)
-
-		return filename
 	}
+
+	url, err := url.Parse(enclosureURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	filename = filepath.Base(url.Path)
+
+	return filename
 }
 
 func makeTitle(title string) (newtitle string) {

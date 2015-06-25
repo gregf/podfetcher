@@ -8,6 +8,7 @@ import (
 	"github.com/gregf/podfetcher/lib/commands"
 )
 
+// Execute parses command line args and fires up commands
 func Execute() {
 	initConfig()
 

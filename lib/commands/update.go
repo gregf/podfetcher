@@ -22,6 +22,8 @@ func feedsPath() (path string) {
 	return filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "feeds")
 }
 
+// Update loops over the feeds file and inserts podcasts + episodes into the
+// database.
 func Update() {
 	feeds, err := readFeeds(feedsPath())
 	if err != nil {
@@ -81,17 +83,17 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 		items = newitems[0:maxEpisodes]
 	}
 	for _, item := range items {
-		var enclosureUrl string
+		var enclosureURL string
 		if strings.Contains(f.Url, "youtube.com") {
 			if len(item.Links) > 0 {
-				enclosureUrl = item.Links[0].Href
+				enclosureURL = item.Links[0].Href
 			} else {
 				log.Printf(enclosureError, item.Title)
 				return
 			}
 		} else {
 			if len(item.Enclosures) > 0 {
-				enclosureUrl = item.Enclosures[0].Url
+				enclosureURL = item.Enclosures[0].Url
 			} else {
 				log.Printf(enclosureError, item.Title)
 				return
@@ -99,8 +101,8 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 		}
 		items := make(map[string]string)
 		items["title"] = item.Title
-		items["rssUrl"] = f.Url
-		items["enclosureUrl"] = enclosureUrl
+		items["rssURL"] = f.Url
+		items["enclosureURL"] = enclosureURL
 		items["pubdate"] = item.PubDate
 		if item.Guid != nil {
 			items["guid"] = *item.Guid

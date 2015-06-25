@@ -19,6 +19,7 @@ const (
 	_TIOCGWINSZ = 0x5413 // OSX 1074295912
 )
 
+// LsNew prints out episodes where downloaded = false
 func LsNew() {
 	new := database.FindEpisodesWithPodcastTitle()
 
