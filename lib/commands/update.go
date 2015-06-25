@@ -78,7 +78,12 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 		items["title"] = item.Title
 		items["rssUrl"] = f.Url
 		items["enclosureUrl"] = enclosureUrl
-		items["guid"] = *item.Guid
+		items["pubdate"] = item.PubDate
+		if item.Guid != nil {
+			items["guid"] = *item.Guid
+		} else {
+			items["guid"] = item.PubDate + f.Url
+		}
 		database.AddItem(items)
 	}
 }

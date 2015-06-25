@@ -23,6 +23,7 @@ type Episode struct {
 	EnclosureUrl string `sql:"unique_index"`
 	Downloaded   bool
 	Guid         string `sql:"unique_index"`
+	PubDate      string
 }
 
 func databasePath() (path string) {
@@ -155,7 +156,7 @@ func AddPodcast(title string, rssurl string) {
 	}
 }
 
-// item[rssUrl] item[title], item[enclosureUrl] item[guid]
+// item[rssUrl] item[title], item[enclosureUrl], item[guid], items[pubdate]
 func AddItem(items map[string]string) {
 	db, err := DBSession()
 	if err != nil {
@@ -171,6 +172,7 @@ func AddItem(items map[string]string) {
 		Downloaded:   false,
 		PodcastID:    podcastId,
 		Guid:         items["guid"],
+		PubDate:      items["pubdate"],
 	}
 
 	if db.NewRecord(&episode) {
