@@ -16,7 +16,7 @@ import (
 	"github.com/gregf/podfetcher/lib/database"
 )
 
-var EnclosureError = "item %s has no enclosure url"
+var enclosureError = "item %s has no enclosure url"
 
 func feedsPath() (path string) {
 	return filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "feeds")
@@ -86,14 +86,14 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 			if len(item.Links) > 0 {
 				enclosureUrl = item.Links[0].Href
 			} else {
-				log.Printf(EnclosureError, item.Title)
+				log.Printf(enclosureError, item.Title)
 				return
 			}
 		} else {
 			if len(item.Enclosures) > 0 {
 				enclosureUrl = item.Enclosures[0].Url
 			} else {
-				log.Printf(EnclosureError, item.Title)
+				log.Printf(enclosureError, item.Title)
 				return
 			}
 		}
