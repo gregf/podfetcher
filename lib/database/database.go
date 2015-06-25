@@ -187,5 +187,32 @@ func CatchUp() {
 	}
 	db.LogMode(false)
 
-	db.Table("episodes").Where("downloaded = ?", false).UpdateColumn("downloaded", true)
+	db.Table("episodes").Where("downloaded = ?", false).
+		UpdateColumn("downloaded", true)
+}
+
+func FindEpisodesWithPodcastTitle() (m map[string][]string) {
+	db, err := DBSession()
+	if err != nil {
+		log.Fatal(err)
+	}
+	db.LogMode(false)
+
+	rows, err := db.Table("Episodes").Where("downloaded = ?",
+		false).Select("title, podcast_id").Rows()
+
+	m = make(map[string][]string)
+
+	for rows.Next() {
+		var eptitle string
+		var podcastId int
+		var title string
+		rows.Scan(&eptitle, &podcastId)
+		row := db.Table("podcasts").Where("id =?",
+			podcastId).Select("title").Row()
+		row.Scan(&title)
+		m[title] = append(m[title], eptitle)
+	}
+
+	return m
 }

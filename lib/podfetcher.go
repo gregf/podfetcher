@@ -34,8 +34,17 @@ func Execute() {
 			commands.CatchUp()
 		},
 	}
+
+	var cmdLsNew = &cobra.Command{
+		Use:   "lsnew",
+		Short: "Display new episodes to be downloaded.",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.LsNew()
+		},
+	}
+
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
-	rootCmd.AddCommand(cmdUpdate, cmdFetch, cmdCatchUp)
+	rootCmd.AddCommand(cmdUpdate, cmdFetch, cmdCatchUp, cmdLsNew)
 	rootCmd.Execute()
 }
 
