@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	rss "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jteeuwen/go-pkg-rss"
@@ -22,7 +23,7 @@ func feedsPath() (path string) {
 }
 
 func Update() {
-	feeds, err := readLines(feedsPath())
+	feeds, err := readFeeds(feedsPath())
 	if err != nil {
 		log.Fatalf("readLines: %s", err)
 	}
@@ -44,6 +45,28 @@ func readLines(path string) (lines []string, err error) {
 		return
 	}
 	lines = strings.Fields(string(content))
+	return lines, err
+}
+
+func readFeeds(path string) (lines []string, err error) {
+	feeds, err := readLines(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	comment, err := regexp.Compile(`\A#`)
+	if err != nil {
+		log.Fatalf("comment %s\n", err)
+	}
+	for _, line := range feeds {
+		if comment.Match([]byte(line)) {
+			return
+		}
+		if len(line) <= 0 {
+			return
+		}
+		lines = append(lines, line)
+	}
 	return lines, err
 }
 
