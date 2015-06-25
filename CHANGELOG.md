@@ -6,6 +6,7 @@
 * Add PubDate to episodes table
 * New command lsnew displays episodes to be downloaded
 * New func readFeeds that allows the feeds file to contain blank lines and comments
+* Went over all the code with golint
 
 # 0.1 / 2015-06-23
 
