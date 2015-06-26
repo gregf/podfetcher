@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
-	"github.com/gregf/podfetcher/lib/database"
-	"github.com/gregf/podfetcher/lib/helpers"
+	"github.com/gregf/podfetcher/src/database"
+	"github.com/gregf/podfetcher/src/helpers"
 )
 
 // Fetch loops through episodes where downloaded = false and downloads them.

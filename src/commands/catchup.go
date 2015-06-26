@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/gregf/podfetcher/lib/database"
+	"github.com/gregf/podfetcher/src/database"
 )
 
 // CatchUp marks all episodes downloaded = true

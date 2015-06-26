@@ -10,8 +10,8 @@ import (
 
 	rss "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jteeuwen/go-pkg-rss"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
-	"github.com/gregf/podfetcher/lib/database"
-	"github.com/gregf/podfetcher/lib/helpers"
+	"github.com/gregf/podfetcher/src/database"
+	"github.com/gregf/podfetcher/src/helpers"
 )
 
 var enclosureError = "item %s has no enclosure url"

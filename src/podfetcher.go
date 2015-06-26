@@ -5,7 +5,7 @@ import (
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/cobra"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
-	"github.com/gregf/podfetcher/lib/commands"
+	"github.com/gregf/podfetcher/src/commands"
 )
 
 // Execute parses command line args and fires up commands

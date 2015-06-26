@@ -5,7 +5,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/gregf/podfetcher/lib/database"
+	"github.com/gregf/podfetcher/src/database"
 )
 
 type winsize struct {

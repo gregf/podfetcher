@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/gilliek/go-opml/opml"
-	"github.com/gregf/podfetcher/lib/helpers"
+	"github.com/gregf/podfetcher/src/helpers"
 )
 
 // Import imports feeds from a opml file.
