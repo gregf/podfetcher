@@ -2,10 +2,8 @@ package commands
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"log"
-	"os"
 	"strings"
 
 	rss "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jteeuwen/go-pkg-rss"
@@ -14,7 +12,7 @@ import (
 	"github.com/gregf/podfetcher/src/helpers"
 )
 
-var enclosureError = "item %s has no enclosure url"
+var enclosureError = "%s is mssing a enclosure url"
 
 // Update loops over the feeds file and inserts podcasts + episodes into the
 // database.
@@ -28,8 +26,7 @@ func Update() {
 		feed := rss.New(0, true, chanHandler, itemHandler)
 		err := feed.Fetch(feedURL, nil)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s: %s", feedURL, err)
-			return
+			log.Println(err)
 		}
 	}
 }
