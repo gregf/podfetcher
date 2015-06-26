@@ -77,7 +77,15 @@ func ytdl(url string) {
 		log.Fatal(err)
 	}
 	cmdName := "youtube-dl"
-	cmdArgs := []string{"--no-playlist", "--continue", "--no-part", "-f", viper.GetString("youtube-quality"), "-o", saveLoc, url}
+	cmdArgs := []string{
+		"--no-playlist",
+		"--continue",
+		"--no-part",
+		"-f",
+		viper.GetString("youtube-quality"),
+		"-o",
+		saveLoc,
+		url}
 	run(cmdName, cmdArgs)
 }
 
