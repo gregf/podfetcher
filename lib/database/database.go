@@ -123,12 +123,10 @@ func FindNewEpisodes() (urls []string, err error) {
 		log.Fatal(err)
 	}
 
-	var totalCount int
 	rows, err := db.Table("episodes").Where("downloaded = ?",
-		false).Select("enclosure_url").Count(&totalCount).Rows()
+		false).Select("enclosure_url").Rows()
 	defer rows.Close()
 
-	urls = make([]string, 0, totalCount)
 	for rows.Next() {
 		var enclosureURL string
 		rows.Scan(&enclosureURL)
