@@ -4,28 +4,22 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
-	"regexp"
 	"strings"
 
 	rss "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jteeuwen/go-pkg-rss"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/lib/database"
+	"github.com/gregf/podfetcher/lib/helpers"
 )
 
 var enclosureError = "item %s has no enclosure url"
 
-func feedsPath() (path string) {
-	return filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "feeds")
-}
-
 // Update loops over the feeds file and inserts podcasts + episodes into the
 // database.
 func Update() {
-	feeds, err := readFeeds(feedsPath())
+	feeds, err := helpers.ReadFeeds(helpers.FeedsPath())
 	if err != nil {
 		log.Fatalf("readLines: %s", err)
 	}
@@ -38,38 +32,6 @@ func Update() {
 			return
 		}
 	}
-}
-
-func readLines(path string) (lines []string, err error) {
-	content, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	lines = strings.Fields(string(content))
-	return lines, err
-}
-
-func readFeeds(path string) (lines []string, err error) {
-	feeds, err := readLines(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	comment, err := regexp.Compile(`\A#`)
-	if err != nil {
-		log.Fatalf("comment %s\n", err)
-	}
-	for _, line := range feeds {
-		if comment.Match([]byte(line)) {
-			return
-		}
-		if len(line) <= 0 {
-			return
-		}
-		lines = append(lines, line)
-	}
-	return lines, err
 }
 
 func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {

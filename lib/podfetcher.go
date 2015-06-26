@@ -44,8 +44,16 @@ func Execute() {
 		},
 	}
 
+	var cmdImport = &cobra.Command{
+		Use:   "import",
+		Short: "Import feeds from a opml file.",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.Import(args)
+		},
+	}
+
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
-	rootCmd.AddCommand(cmdUpdate, cmdFetch, cmdCatchUp, cmdLsNew)
+	rootCmd.AddCommand(cmdUpdate, cmdFetch, cmdCatchUp, cmdLsNew, cmdImport)
 	rootCmd.Execute()
 }
 

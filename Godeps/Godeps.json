@@ -8,6 +8,11 @@
 			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
 		},
 		{
+			"ImportPath": "github.com/gilliek/go-opml/opml",
+			"Comment": "v1.0.0-4-g279548d",
+			"Rev": "279548d83dbbcf188d8848fb660b1df56145c66a"
+		},
+		{
 			"ImportPath": "github.com/inconshreveable/mousetrap",
 			"Rev": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
 		},
