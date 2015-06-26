@@ -22,7 +22,8 @@ func Fetch() {
 	}
 
 	for _, url := range urls {
-		fmt.Printf("Fetching: %s - %s\n", database.FindPodcastTitleByURL(url),
+		fmt.Printf("Fetching: %s - %s\n",
+			database.FindPodcastTitleByURL(url),
 			database.FindEpisodeTitleByURL(url))
 		download(url)
 	}
@@ -47,8 +48,14 @@ func run(cmdName string, cmdArgs []string) {
 
 func wget(url string) {
 	title := makeTitle(database.FindPodcastTitleByURL(url))
-	saveLoc := filepath.Join(helpers.ExpandPath(viper.GetString("download")), title, getFileName(url, false))
-	err := os.MkdirAll(filepath.Join(helpers.ExpandPath(viper.GetString("download")), title), 0755)
+	saveLoc := filepath.Join(
+		helpers.ExpandPath(viper.GetString("download")),
+		title,
+		getFileName(url, false))
+	err := os.MkdirAll(filepath.Join(
+		helpers.ExpandPath(viper.GetString("download")),
+		title),
+		0755)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,8 +66,13 @@ func wget(url string) {
 
 func ytdl(url string) {
 	title := makeTitle(database.FindPodcastTitleByURL(url))
-	saveLoc := filepath.Join(viper.GetString("download"), title, getFileName(url, true))
-	err := os.MkdirAll(filepath.Join(viper.GetString("download"), title), 0755)
+	saveLoc := filepath.Join(
+		viper.GetString("download"),
+		title,
+		getFileName(url, true))
+	err := os.MkdirAll(filepath.Join(
+		viper.GetString("download"),
+		title), 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +88,7 @@ func getFileName(enclosureURL string, youtube bool) (filename string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		filename = string(ytdlOut)
+		filename = strings.Split(string(ytdlOut), "\n")[0]
 		return filename
 	}
 
