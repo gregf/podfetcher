@@ -43,4 +43,5 @@ github-release upload \
 --name "podfetcher.tar.bz2" \
 --file "podfetcher.tar.bz2"
 
+rm -rf release
 rm -f podfetcher.tar.bz2
