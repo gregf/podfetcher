@@ -12,7 +12,7 @@ import (
 	"github.com/gregf/podfetcher/src/helpers"
 )
 
-var enclosureError = "%s is mssing a enclosure url"
+var enclosureError = "%s is missing a enclosure url"
 
 // Update loops over the feeds file and inserts podcasts + episodes into the
 // database.
