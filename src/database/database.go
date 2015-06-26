@@ -41,59 +41,43 @@ func databasePath() (path string) {
 }
 
 func init() {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	db := DBSession()
 	db.LogMode(false)
 
-	if !dbexists(databasePath()) {
-		db.CreateTable(&Podcast{})
-		db.CreateTable(&Episode{})
-	}
+	db.CreateTable(&Podcast{})
+	db.CreateTable(&Episode{})
 	db.AutoMigrate(&Podcast{}, &Episode{})
 }
 
-func dbexists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
 // DBSession sets up a database session
-func DBSession() (db gorm.DB, err error) {
+func DBSession() (db gorm.DB) {
 	sqliteSession, err := gorm.Open("sqlite3", databasePath())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return sqliteSession, err
+	return sqliteSession
 }
 
 // SetDownloadedByURL updates all downloaded columns to be true
 func SetDownloadedByURL(url string) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
+	db.LogMode(false)
 
-	db.Table("episodes").Where("enclosure_url = ?", url).UpdateColumn("downloaded", true)
+	db.Table("episodes").
+		Where("enclosure_url = ?", url).
+		UpdateColumn("downloaded", true)
 }
 
 // FindEpisodeTitleByURL finds episode titles by url
 func FindEpisodeTitleByURL(url string) (title string) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
+	db.LogMode(false)
 
-	row := db.Table("episodes").Where("enclosure_url = ?", url).Select("title").Row()
+	row := db.Table("episodes").
+		Where("enclosure_url = ?", url).
+		Select("title").
+		Row()
 	row.Scan(&title)
 
 	return title
@@ -101,16 +85,17 @@ func FindEpisodeTitleByURL(url string) (title string) {
 
 // FindPodcastTitleByURL finds podcast titles by URL
 func FindPodcastTitleByURL(url string) (title string) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
+	db.LogMode(false)
 
 	var podcastID int
 	row := db.Table("episodes").Where("enclosure_url = ?", url).Select("podcast_id").Row()
 	row.Scan(&podcastID)
 
-	prow := db.Table("podcasts").Where("id = ?", podcastID).Select("title").Row()
+	prow := db.Table("podcasts").
+		Where("id = ?", podcastID).
+		Select("title").
+		Row()
 	prow.Scan(&title)
 
 	return title
@@ -118,13 +103,13 @@ func FindPodcastTitleByURL(url string) (title string) {
 
 // FindNewEpisodes finds episodes where downloaded = false
 func FindNewEpisodes() (urls []string, err error) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
+	db.LogMode(false)
 
-	rows, err := db.Table("episodes").Where("downloaded = ?",
-		false).Select("enclosure_url").Rows()
+	rows, err := db.Table("episodes").
+		Where("downloaded = ?", false).
+		Select("enclosure_url").
+		Rows()
 	defer rows.Close()
 
 	for rows.Next() {
@@ -137,22 +122,20 @@ func FindNewEpisodes() (urls []string, err error) {
 
 // findPodcastID locates podcast ID by rssURL
 func findPodcastID(rssurl string) (podcastID int) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
+	db.LogMode(false)
 
-	row := db.Table("podcasts").Where("rss_url = ?", rssurl).Select("id").Row()
+	row := db.Table("podcasts").
+		Where("rss_url = ?", rssurl).
+		Select("id").
+		Row()
 	row.Scan(&podcastID)
 	return podcastID
 }
 
 // AddPodcast Inserts a new podcast into the database
 func AddPodcast(title string, rssurl string) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
 	db.LogMode(false)
 
 	podcast := Podcast{
@@ -169,10 +152,7 @@ func AddPodcast(title string, rssurl string) {
 //
 // item[rssURL] item[title], item[enclosureURL], item[guid], items[pubdate]
 func AddItem(items map[string]string) {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
 	db.LogMode(false)
 
 	podcastID := findPodcastID(items["rssURL"])
@@ -193,10 +173,7 @@ func AddItem(items map[string]string) {
 
 // CatchUp Marks all downloaded = false to be downloaded = true
 func CatchUp() {
-	db, err := DBSession()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := DBSession()
 	db.LogMode(false)
 
 	db.Table("episodes").Where("downloaded = ?", false).
@@ -206,14 +183,16 @@ func CatchUp() {
 // FindEpisodesWithPodcastTitle Finds episodes with their podcast title and
 // returns a map[string]string
 func FindEpisodesWithPodcastTitle() (m map[string][]string) {
-	db, err := DBSession()
+	db := DBSession()
+	db.LogMode(false)
+
+	rows, err := db.Table("Episodes").
+		Where("downloaded = ?", false).
+		Select("title, podcast_id").
+		Rows()
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.LogMode(false)
-
-	rows, err := db.Table("Episodes").Where("downloaded = ?",
-		false).Select("title, podcast_id").Rows()
 
 	m = make(map[string][]string)
 
@@ -222,8 +201,10 @@ func FindEpisodesWithPodcastTitle() (m map[string][]string) {
 		var podcastID int
 		var title string
 		rows.Scan(&eptitle, &podcastID)
-		row := db.Table("podcasts").Where("id =?",
-			podcastID).Select("title").Row()
+		row := db.Table("podcasts").
+			Where("id =?", podcastID).
+			Select("title").
+			Row()
 		row.Scan(&title)
 		m[title] = append(m[title], eptitle)
 	}
