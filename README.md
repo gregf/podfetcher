@@ -4,7 +4,16 @@
 
 Podfetcher is a simple Podcast Fetcher written in Go. It will download all your favorite podcasts including youtube subscriptions for later viewing.
 
-You can also add filters to `config.yml` that will allow you to skip podcast episodes you do not want to see.
+You can also add filters to `config.yml` that will allow you to skip podcast episodes you do not want to see. To add a filter enter the podcast title under the filters section. Followed by a list of filters. You can get the podcast title from lsnew usually.
+
+```
+config.yml
+...
+filters:
+  Some Show:
+    - "Filter me"
+    - "Another Filter"
+```
 
 ## Requirements
 
