@@ -56,6 +56,10 @@
 			"Rev": "2caf8efc93669b6c43e0441cdc6aed17546c96f3"
 		},
 		{
+			"ImportPath": "github.com/nightlyone/lockfile",
+			"Rev": "43355cd47c95de7ec662a8da66abbfdbc8ab3d88"
+		},
+		{
 			"ImportPath": "github.com/spf13/cast",
 			"Rev": "4d07383ffe94b5e5a6fa3af9211374a4507a0184"
 		},

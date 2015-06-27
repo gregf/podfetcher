@@ -3,7 +3,11 @@ package podfetcher
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/nightlyone/lockfile"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/cobra"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/src/commands"
@@ -14,7 +18,11 @@ const podFetcherVersion = "v0.2"
 
 // Execute parses command line args and fires up commands
 func Execute() {
+	lf := "/tmp/podfetcher.lock"
+
 	initConfig()
+	createLock(lf)
+	trapInit(lf)
 
 	var cmdVersion = &cobra.Command{
 		Use:   "version",
@@ -73,6 +81,7 @@ func Execute() {
 		cmdLsNew,
 		cmdImport)
 	rootCmd.Execute()
+	unLock(lf)
 }
 
 func initConfig() {
@@ -87,4 +96,38 @@ func initConfig() {
 		log.Fatal("Fatal error config file %s \n", err)
 		return
 	}
+}
+
+func createLock(lockFile string) {
+	lock, err := lockfile.New(lockFile)
+	if err != nil {
+		fmt.Println("Cannot init lock. reason: %v", err)
+		log.Fatal(err)
+	}
+
+	err = lock.TryLock()
+	if err != nil {
+		log.Fatalf("Podfetcher: %s\n", err)
+	}
+}
+
+func unLock(lockFile string) {
+	lock, err := lockfile.New(lockFile)
+	if err != nil {
+		log.Fatalf("Podfetcher: %s\n", err)
+	}
+
+	lock.Unlock()
+}
+
+func trapInit(lockFile string) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, syscall.SIGTERM)
+	go func() {
+		<-c
+		unLock(lockFile)
+		os.Exit(1)
+	}()
+
 }
