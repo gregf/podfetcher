@@ -11,7 +11,16 @@ import (
 func Run(podcastTitle string, episodeTitle string) bool {
 	filterName := fmt.Sprintf("filters.%s", podcastTitle)
 	filters := viper.GetStringSlice(filterName)
+	globalFilters := viper.GetStringSlice("filters.Global")
 
+	// Global filters
+	for _, filter := range globalFilters {
+		if strings.Contains(episodeTitle, filter) {
+			return true
+		}
+	}
+
+	// Podcast specific filters
 	for _, filter := range filters {
 		if strings.Contains(episodeTitle, filter) {
 			return true

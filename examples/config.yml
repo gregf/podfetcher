@@ -3,6 +3,8 @@ main:
   youtube-quality: best
   episodes: 10
 filters:
+  Global:
+    - "Global Filter"
   Example:
     - "Filter Me"
     - "Filter"
