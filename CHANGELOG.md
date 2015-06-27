@@ -1,4 +1,8 @@
-# UnReleased
+# Unreleased
+
+* Added the ability to filter out unwanted podcast episodes.
+
+# v0.2 / 2015-06-26
 
 * use XDG_CONFIG_HOME and XDG_CACHE_HOME
 * expandPath on ~ for config.toml
@@ -9,6 +13,6 @@
 * Went over all the code with golint
 * Add Import command, to import feeds from a opml file.
 
-# 0.1 / 2015-06-23
+# v0.1 / 2015-06-23
 
 * Initial Release
