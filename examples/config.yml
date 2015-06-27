@@ -1,0 +1,8 @@
+main:
+  download: ~/podcasts
+  youtube-quality: best
+  episodes: 10
+filters:
+  Example:
+    - "Filter Me"
+    - "Filter"

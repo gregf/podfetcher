@@ -1,6 +1,7 @@
 package podfetcher
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/cobra"
@@ -8,9 +9,20 @@ import (
 	"github.com/gregf/podfetcher/src/commands"
 )
 
+// Podfetcher Version number
+const podFetcherVersion = "v0.2"
+
 // Execute parses command line args and fires up commands
 func Execute() {
 	initConfig()
+
+	var cmdVersion = &cobra.Command{
+		Use:   "version",
+		Short: "Print the version number of Hugo",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("Podfetcher: %s\n", podFetcherVersion)
+		},
+	}
 
 	var cmdUpdate = &cobra.Command{
 		Use:   "update",
@@ -53,7 +65,13 @@ func Execute() {
 	}
 
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
-	rootCmd.AddCommand(cmdUpdate, cmdFetch, cmdCatchUp, cmdLsNew, cmdImport)
+	rootCmd.AddCommand(
+		cmdVersion,
+		cmdUpdate,
+		cmdFetch,
+		cmdCatchUp,
+		cmdLsNew,
+		cmdImport)
 	rootCmd.Execute()
 }
 
@@ -62,7 +80,7 @@ func initConfig() {
 	viper.AddConfigPath("/etc/podfetcher")
 	viper.AddConfigPath("$HOME/.config/podfetcher")
 	viper.AddConfigPath("$XDG_CONFIG_HOME/podfetcher")
-	viper.SetConfigType("toml")
+	viper.SetConfigType("yml")
 
 	err := viper.ReadInConfig()
 	if err != nil {

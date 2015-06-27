@@ -6,6 +6,7 @@ import (
 	"unsafe"
 
 	"github.com/gregf/podfetcher/src/database"
+	"github.com/gregf/podfetcher/src/filter"
 )
 
 type winsize struct {
@@ -23,14 +24,21 @@ const (
 func LsNew() {
 	new := database.FindEpisodesWithPodcastTitle()
 
-	for title, eptitle := range new {
-		for _, t := range eptitle {
-			w := int(getWidth() / 3)
-			fmt.Printf("%-*.*s - %-.*s\n",
-				w,
-				w,
-				title,
-				w,
+	fmt.Println("Episodes marked with [*] have been filtered\n")
+	for podcastTitle, episodeTitle := range new {
+		for _, t := range episodeTitle {
+			var filtered string
+			if filter.Run(podcastTitle, t) {
+				filtered = "[*]"
+			}
+			w1 := int(getWidth() / 4)
+			w2 := int(getWidth() / 2)
+			fmt.Printf("%-3s %-*.*s - %-.*s\n",
+				filtered,
+				w1,
+				w1,
+				podcastTitle,
+				w2,
 				t)
 		}
 	}

@@ -11,6 +11,7 @@ import (
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/src/database"
+	"github.com/gregf/podfetcher/src/filter"
 	"github.com/gregf/podfetcher/src/helpers"
 )
 
@@ -22,14 +23,19 @@ func Fetch() {
 	}
 
 	for _, url := range urls {
-		fmt.Printf("Fetching: %s - %s\n",
-			database.FindPodcastTitleByURL(url),
-			database.FindEpisodeTitleByURL(url))
-		download(url)
+		podcastTitle := database.FindPodcastTitleByURL(url)
+		episodeTitle := database.FindEpisodeTitleByURL(url)
+		download(podcastTitle, episodeTitle, url)
 	}
 }
 
-func download(url string) {
+func download(podcastTitle string, episodeTitle string, url string) {
+	if filter.Run(podcastTitle, episodeTitle) {
+		fmt.Printf("Filtered: %s - %s\n", podcastTitle, episodeTitle)
+		database.SetDownloadedByURL(url)
+		return
+	}
+	fmt.Printf("Fetching: %s - %s\n", podcastTitle, episodeTitle)
 	if strings.Contains(url, "youtube.com") {
 		ytdl(url)
 	} else {
@@ -48,12 +54,13 @@ func run(cmdName string, cmdArgs []string) {
 
 func wget(url string) {
 	title := makeTitle(database.FindPodcastTitleByURL(url))
+	download := helpers.ExpandPath(viper.GetString("main.download"))
 	saveLoc := filepath.Join(
-		helpers.ExpandPath(viper.GetString("download")),
+		download,
 		title,
 		getFileName(url, false))
 	err := os.MkdirAll(filepath.Join(
-		helpers.ExpandPath(viper.GetString("download")),
+		download,
 		title),
 		0755)
 	if err != nil {
@@ -66,12 +73,13 @@ func wget(url string) {
 
 func ytdl(url string) {
 	title := makeTitle(database.FindPodcastTitleByURL(url))
+	download := helpers.ExpandPath(viper.GetString("main.download"))
 	saveLoc := filepath.Join(
-		viper.GetString("download"),
+		download,
 		title,
 		getFileName(url, true))
 	err := os.MkdirAll(filepath.Join(
-		viper.GetString("download"),
+		download,
 		title), 0755)
 	if err != nil {
 		log.Fatal(err)
@@ -82,7 +90,7 @@ func ytdl(url string) {
 		"--continue",
 		"--no-part",
 		"-f",
-		viper.GetString("youtube-quality"),
+		viper.GetString("main.youtube-quality"),
 		"-o",
 		saveLoc,
 		url}

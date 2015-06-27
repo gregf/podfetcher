@@ -34,7 +34,7 @@ func Update() {
 func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	database.AddPodcast(ch.Title, f.Url)
 
-	var maxEpisodes = viper.GetInt("episodes")
+	var maxEpisodes = viper.GetInt("main.episodes")
 	var items []*rss.Item
 	if len(newitems) < maxEpisodes {
 		items = newitems[0:len(newitems)]
