@@ -29,7 +29,7 @@ func Fetch() {
 	}
 }
 
-func download(podcastTitle string, episodeTitle string, url string) {
+func download(podcastTitle, episodeTitle, url string) {
 	if filter.Run(podcastTitle, episodeTitle) {
 		fmt.Printf("Filtered: %s - %s\n", podcastTitle, episodeTitle)
 		database.SetDownloadedByURL(url)

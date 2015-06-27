@@ -134,7 +134,7 @@ func findPodcastID(rssurl string) (podcastID int) {
 }
 
 // AddPodcast Inserts a new podcast into the database
-func AddPodcast(title string, rssurl string) {
+func AddPodcast(title, rssurl string) {
 	db := DBSession()
 	db.LogMode(false)
 
