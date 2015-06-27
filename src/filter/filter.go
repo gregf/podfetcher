@@ -15,16 +15,25 @@ func Run(podcastTitle string, episodeTitle string) bool {
 
 	// Global filters
 	for _, filter := range globalFilters {
-		if strings.Contains(episodeTitle, filter) {
+		if compare(episodeTitle, filter) {
 			return true
 		}
 	}
 
 	// Podcast specific filters
 	for _, filter := range filters {
-		if strings.Contains(episodeTitle, filter) {
+		if compare(episodeTitle, filter) {
 			return true
 		}
+	}
+	return false
+}
+
+func compare(episodeTitle, filter string) bool {
+	e := strings.ToLower(episodeTitle)
+	f := strings.ToLower(filter)
+	if strings.Contains(e, f) {
+		return true
 	}
 	return false
 }
