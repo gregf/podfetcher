@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	// required by gorm
@@ -141,7 +140,7 @@ func AddPodcast(title, rssurl string) {
 
 	podcast := Podcast{
 		Title:  title,
-		RssURL: strings.ToLower(rssurl),
+		RssURL: rssurl,
 	}
 	if db.NewRecord(&podcast) {
 		db.Create(&podcast)
@@ -160,7 +159,7 @@ func AddItem(items map[string]string) {
 
 	episode := Episode{
 		Title:        items["title"],
-		EnclosureURL: strings.ToLower(items["enclosureURL"]),
+		EnclosureURL: items["enclosureURL"],
 		Downloaded:   false,
 		PodcastID:    podcastID,
 		GUID:         items["guid"],

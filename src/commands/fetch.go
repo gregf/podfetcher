@@ -36,7 +36,7 @@ func download(podcastTitle, episodeTitle, url string) {
 		return
 	}
 	fmt.Printf("Fetching: %s - %s\n", podcastTitle, episodeTitle)
-	if strings.Contains(url, "youtube.com") {
+	if strings.Contains(strings.ToLower(url), "youtube.com") {
 		ytdl(url)
 	} else {
 		wget(url)
@@ -48,7 +48,7 @@ func run(cmdName string, cmdArgs []string) {
 	cmd := exec.Command(cmdName, cmdArgs...)
 	_, err := cmd.Output()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -64,7 +64,7 @@ func wget(url string) {
 		title),
 		0755)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("mkdir failed %s\n", err)
 	}
 	cmdName := "wget"
 	cmdArgs := []string{"-c", url, "-O", saveLoc}
@@ -82,7 +82,7 @@ func ytdl(url string) {
 		download,
 		title), 0755)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("mkdir failed %s\n", err)
 	}
 	cmdName := "youtube-dl"
 	cmdArgs := []string{
@@ -99,12 +99,16 @@ func ytdl(url string) {
 
 func getFileName(enclosureURL string, youtube bool) (filename string) {
 	if youtube {
-		ytdlCmd := exec.Command("youtube-dl", "--get-filename", enclosureURL)
-		ytdlOut, err := ytdlCmd.Output()
+		cmdName := "youtube-dl"
+		cmdArgs := []string{
+			"--get-filename",
+			enclosureURL}
+		cmd := exec.Command(cmdName, cmdArgs...)
+		cmdOut, err := cmd.Output()
 		if err != nil {
 			log.Fatal(err)
 		}
-		filename = strings.Split(string(ytdlOut), "\n")[0]
+		filename = strings.Split(string(cmdOut), "\n")[0]
 		return filename
 	}
 
