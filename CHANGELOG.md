@@ -3,6 +3,8 @@
 * Added the ability to filter out unwanted podcast episodes.
 * Add version command
 * Switched from toml to yml for configuration
+* Add lockfile to protect database
+* Call ToLower() when we are comparing urls
 
 # v0.2 / 2015-06-26
 
