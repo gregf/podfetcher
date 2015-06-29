@@ -5,6 +5,7 @@
 * Switched from toml to yml for configuration
 * Add lockfile to protect database
 * Call ToLower() when we are comparing urls
+* Custom downloader function so we can control the output format
 
 # v0.2 / 2015-06-26
 
