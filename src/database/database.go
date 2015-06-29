@@ -35,7 +35,7 @@ func databasePath() (path string) {
 		os.MkdirAll(path, 0755)
 		return filepath.Join(path, "cache.db")
 	}
-	path = filepath.Join(os.Getenv("HOME"), ".cache", "podfatcher")
+	path = filepath.Join(os.Getenv("HOME"), ".cache", "podfetcher")
 	os.MkdirAll(path, 0755)
 	return filepath.Join(path, "cache.db")
 }
