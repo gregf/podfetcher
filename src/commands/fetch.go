@@ -132,6 +132,7 @@ func downloader(p Params) {
 		fi, _ = file.Stat()
 		bar.Set(int(fi.Size()))
 		bar.ShowBar = false
+		bar.ShowSpeed = true
 		bar.SetUnits(pb.U_BYTES)
 	}
 
