@@ -2,18 +2,29 @@ package commands
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/cheggaaa/pb"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
+
 	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/filter"
 	"github.com/gregf/podfetcher/src/helpers"
 )
+
+// Params struct for downloader
+type Params struct {
+	url     string
+	yturl   string
+	youtube bool
+}
 
 // Fetch loops through episodes where downloaded = false and downloads them.
 func Fetch() {
@@ -35,11 +46,11 @@ func download(podcastTitle, episodeTitle, url string) {
 		database.SetDownloadedByURL(url)
 		return
 	}
-	fmt.Printf("Fetching: %s - %s\n", podcastTitle, episodeTitle)
+	fmt.Printf("Downloading: %s - %s\n", podcastTitle, episodeTitle)
 	if strings.Contains(strings.ToLower(url), "youtube.com") {
-		ytdl(url)
+		downloader(Params{url: getYoutubeURL(url), yturl: url, youtube: true})
 	} else {
-		wget(url)
+		downloader(Params{url: url, youtube: false})
 	}
 	database.SetDownloadedByURL(url)
 }
@@ -52,49 +63,99 @@ func run(cmdName string, cmdArgs []string) {
 	}
 }
 
-func wget(url string) {
-	title := makeTitle(database.FindPodcastTitleByURL(url))
-	download := helpers.ExpandPath(viper.GetString("main.download"))
-	saveLoc := filepath.Join(
-		download,
-		title,
-		getFileName(url, false))
-	err := os.MkdirAll(filepath.Join(
-		download,
-		title),
-		0755)
+func downloader(p Params) {
+	var fileName string
+	var title string
+	if p.youtube {
+		fileName = getFileName(p.yturl, p.youtube)
+		title = makeTitle(database.FindPodcastTitleByURL(p.yturl))
+	} else {
+		fileName = getFileName(p.url, p.youtube)
+		title = makeTitle(database.FindPodcastTitleByURL(p.url))
+	}
+
+	dlDir := helpers.ExpandPath(viper.GetString("main.download"))
+	saveLoc := filepath.Join(dlDir, title, fileName)
+	err := os.MkdirAll(filepath.Join(dlDir, title), 0755)
 	if err != nil {
 		log.Fatal("mkdir failed %s\n", err)
 	}
-	cmdName := "wget"
-	cmdArgs := []string{"-c", url, "-O", saveLoc}
-	run(cmdName, cmdArgs)
+	/*
+		Create new file.
+		Filename from fileName variable
+	*/
+	file, err := os.Create(saveLoc)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	/*
+		check status and CheckRedirect
+	*/
+	checkStatus := http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			r.URL.Opaque = r.URL.Path
+			return nil
+		},
+	}
+
+	/*
+		Get Response: 200 OK?
+	*/
+	response, err := checkStatus.Get(p.url)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer response.Body.Close()
+
+	/*
+		fileSize example: 12572 bytes
+	*/
+	filesize := response.ContentLength
+	go func() {
+		n, err := io.Copy(file, response.Body)
+		if n != filesize {
+			fmt.Println("Truncated")
+		}
+		if err != nil {
+			fmt.Printf("Error: %v", err)
+		}
+	}()
+
+	countSize := int(filesize)
+	bar := pb.StartNew(countSize)
+	var fi os.FileInfo
+	for fi == nil || fi.Size() < filesize {
+		fi, _ = file.Stat()
+		bar.Set(int(fi.Size()))
+		bar.ShowBar = false
+		bar.SetUnits(pb.U_BYTES)
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("")
 }
 
-func ytdl(url string) {
-	title := makeTitle(database.FindPodcastTitleByURL(url))
-	download := helpers.ExpandPath(viper.GetString("main.download"))
-	saveLoc := filepath.Join(
-		download,
-		title,
-		getFileName(url, true))
-	err := os.MkdirAll(filepath.Join(
-		download,
-		title), 0755)
-	if err != nil {
-		log.Fatal("mkdir failed %s\n", err)
-	}
+func getYoutubeURL(url string) (yturl string) {
 	cmdName := "youtube-dl"
 	cmdArgs := []string{
-		"--no-playlist",
-		"--continue",
-		"--no-part",
-		"-f",
+		"--format",
 		viper.GetString("main.youtube-quality"),
-		"-o",
-		saveLoc,
+		"--get-url",
 		url}
-	run(cmdName, cmdArgs)
+	cmd := exec.Command(cmdName, cmdArgs...)
+	cmdOut, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	yturl = strings.Split(string(cmdOut), "\n")[0]
+
+	return yturl
 }
 
 func getFileName(enclosureURL string, youtube bool) (filename string) {

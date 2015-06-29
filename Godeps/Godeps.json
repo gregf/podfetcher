@@ -8,6 +8,10 @@
 			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
 		},
 		{
+			"ImportPath": "github.com/cheggaaa/pb",
+			"Rev": "e648e12b78cedf14ebb2fc1855033f07b034cfbb"
+		},
+		{
 			"ImportPath": "github.com/gilliek/go-opml/opml",
 			"Comment": "v1.0.0-4-g279548d",
 			"Rev": "279548d83dbbcf188d8848fb660b1df56145c66a"

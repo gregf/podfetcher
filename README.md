@@ -17,7 +17,6 @@ filters:
 
 ## Requirements
 
-* wget
 * [youtube-dl](https://rg3.github.io/youtube-dl/) (Optional if you are not using youtube feeds)
 
 ## Usage
