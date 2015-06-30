@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/gregf/podfetcher.svg?branch=master)](https://travis-ci.org/gregf/podfetcher)
 # podfetcher
 
 ## Description
