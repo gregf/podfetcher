@@ -93,7 +93,7 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("Fatal error config file %s \n", err)
+		log.Fatalf("Fatal error config file %s \n", err)
 		return
 	}
 }
@@ -101,8 +101,7 @@ func initConfig() {
 func createLock(lockFile string) {
 	lock, err := lockfile.New(lockFile)
 	if err != nil {
-		fmt.Println("Cannot init lock. reason: %v", err)
-		log.Fatal(err)
+		log.Fatalf("Cannot init lock. reason: %v", err)
 	}
 
 	err = lock.TryLock()

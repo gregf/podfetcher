@@ -24,7 +24,7 @@ const (
 func LsNew() {
 	new := database.FindEpisodesWithPodcastTitle()
 
-	fmt.Println("Episodes marked with [*] have been filtered\n")
+	fmt.Printf("Episodes marked with [*] have been filtered\n\n")
 	for podcastTitle, episodeTitle := range new {
 		for _, t := range episodeTitle {
 			var filtered string

@@ -91,7 +91,7 @@ func downloader(p Params) {
 	saveLoc := filepath.Join(dlDir, title, fileName)
 	err := os.MkdirAll(filepath.Join(dlDir, title), 0755)
 	if err != nil {
-		log.Fatal("mkdir failed %s\n", err)
+		log.Fatalf("mkdir failed %s\n", err)
 	}
 	/*
 		Create new file.
