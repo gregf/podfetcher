@@ -9,10 +9,15 @@
 set -e
 
 # Automatic checks
+echo "gofmt..."
 test -z "$(gofmt -l -w .     | tee /dev/stderr)"
+echo "goimports..."
 test -z "$(goimports -l -w . | tee /dev/stderr)"
+echo "golint..."
 test -z "$(golint .          | tee /dev/stderr)"
+echo "go vet..."
 go vet ./...
+echo "go test..."
 env GORACE="halt_on_error=1" go test -v -race ./...
 
 # Run test coverage on each subdirectories and merge the coverage profile.
@@ -23,6 +28,7 @@ echo "mode: count" > profile.cov
 for dir in $(find . -maxdepth 10 -not -path './Godeps*' -not -path './.git*' -not -path '*/_*' -type d);
 do
 if ls $dir/*.go &> /dev/null; then
+  echo "go test $dir..."
   go test -covermode=count -coverprofile=$dir/profile.tmp $dir
   if [ -f $dir/profile.tmp ]; then
     cat $dir/profile.tmp | tail -n +2 >> profile.cov
@@ -31,6 +37,7 @@ if ls $dir/*.go &> /dev/null; then
 fi
 done
 
+echo "go tool..."
 go tool cover -func profile.cov
 
 # To submit the test coverage result to coveralls.io,
