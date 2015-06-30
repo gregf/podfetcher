@@ -196,9 +196,12 @@ func getFileName(enclosureURL string, youtube bool) (filename string) {
 	return filename
 }
 
-func makeTitle(title string) (newtitle string) {
-	newtitle = strings.Replace(title, " ", "", -1)
-	newtitle = strings.Replace(newtitle, "%20", "", -1)
+func makeTitle(title string) (t string) {
+	title = strings.Replace(title, " ", "", -1)
+	title = strings.Replace(title, "%20", "", -1)
+	title = strings.Replace(title, "/", "-", -1)
+	title = strings.Replace(title, "\\", "-", -1)
+	title = strings.Replace(title, "'", "", -1)
 
-	return newtitle
+	return t
 }
