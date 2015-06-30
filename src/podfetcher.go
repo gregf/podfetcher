@@ -72,6 +72,14 @@ func Execute() {
 		},
 	}
 
+	var cmdAdd = &cobra.Command{
+		Use:   "add",
+		Short: "Add a feed to your feeds file.",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.Add(args)
+		},
+	}
+
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
 	rootCmd.AddCommand(
 		cmdVersion,
@@ -79,7 +87,8 @@ func Execute() {
 		cmdFetch,
 		cmdCatchUp,
 		cmdLsNew,
-		cmdImport)
+		cmdImport,
+		cmdAdd)
 	rootCmd.Execute()
 	unLock(lf)
 }
