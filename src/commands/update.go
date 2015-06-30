@@ -37,7 +37,7 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	var maxEpisodes = viper.GetInt("main.episodes")
 	var items []*rss.Item
 	if len(newitems) < maxEpisodes {
-		items = newitems[0:len(newitems)]
+		items = newitems[0:]
 	} else {
 		items = newitems[0:maxEpisodes]
 	}
