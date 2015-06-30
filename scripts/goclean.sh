@@ -10,11 +10,11 @@ set -e
 
 # Automatic checks
 echo "gofmt..."
-test -z "$(gofmt -l -w .     | tee /dev/stderr)"
+test -z "$(gofmt -l -w src | tee /dev/stderr)"
 echo "goimports..."
-test -z "$(goimports -l -w . | tee /dev/stderr)"
+test -z "$(goimports -l -w src | tee /dev/stderr)"
 echo "golint..."
-test -z "$(golint .          | tee /dev/stderr)"
+test -z "$(golint src | tee /dev/stderr)"
 echo "go vet..."
 go vet ./...
 echo "go test..."
