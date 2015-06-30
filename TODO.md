@@ -12,7 +12,6 @@
   - shows filtered
   - shows downloaded
   - date downloaded?
-* add (appends feed to feeds file)
 * import should optionally take a url to a opml file
 * browse (opens podcast dir with main.browse-program which will default to ranger)
   - learn how to detach the process
@@ -23,4 +22,3 @@
 * Improve comments
 * Setup Command to self generate config on startup if none present.
 * Add some color? Make sure users can turn this off.
-* Fix bug where filenames include /'s like the /dev/hell podcast
