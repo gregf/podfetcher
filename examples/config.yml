@@ -2,6 +2,7 @@ main:
   download: ~/podcasts
   youtube-quality: best
   episodes: 10
+  notify-program: notify-send
 filters:
   Global:
     - "Global Filter"

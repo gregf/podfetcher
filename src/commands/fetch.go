@@ -53,6 +53,7 @@ func download(podcastTitle, episodeTitle, url string) {
 		downloader(Params{url: url, youtube: false})
 	}
 	database.SetDownloadedByURL(url)
+	notify(podcastTitle, episodeTitle)
 }
 
 func run(cmdName string, cmdArgs []string) {
@@ -61,6 +62,18 @@ func run(cmdName string, cmdArgs []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func notify(podcastTitle, episodeTitle string) {
+	cmdName := viper.GetString("main.notify-program")
+	cmdArgs := []string{
+		"podfetcher:",
+		fmt.Sprintf("Fetched: %s - %s", podcastTitle, episodeTitle),
+	}
+	if len(cmdName) <= 0 {
+		return
+	}
+	run(cmdName, cmdArgs)
 }
 
 func downloader(p Params) {

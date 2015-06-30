@@ -1,3 +1,7 @@
+# Unreleased
+
+* Add a optional notification after each download
+
 # v0.3 / 2015-06-29
 
 * Added the ability to filter out unwanted podcast episodes.
