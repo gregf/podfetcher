@@ -10,8 +10,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/cheggaaa/pb"
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/juju/deputy"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 
 	"github.com/gregf/podfetcher/src/database"
@@ -56,12 +58,18 @@ func download(podcastTitle, episodeTitle, url string) {
 	notify(podcastTitle, episodeTitle)
 }
 
-func run(cmdName string, cmdArgs []string) {
+func run(cmdName string, cmdArgs []string) (cmdOut string) {
+	d := deputy.Deputy{
+		Errors:    deputy.FromStderr,
+		StdoutLog: func(b []byte) { cmdOut = string(b) },
+		Timeout:   time.Second * 30,
+	}
 	cmd := exec.Command(cmdName, cmdArgs...)
-	_, err := cmd.Output()
+	err := d.Run(cmd)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return cmdOut
 }
 
 func notify(podcastTitle, episodeTitle string) {
@@ -162,13 +170,8 @@ func getYoutubeURL(url string) (yturl string) {
 		viper.GetString("main.youtube-quality"),
 		"--get-url",
 		url}
-	cmd := exec.Command(cmdName, cmdArgs...)
-	cmdOut, err := cmd.Output()
-	if err != nil {
-		log.Fatal(err)
-	}
+	cmdOut := run(cmdName, cmdArgs)
 	yturl = strings.Split(string(cmdOut), "\n")[0]
-
 	return yturl
 }
 
@@ -178,11 +181,7 @@ func getFileName(enclosureURL string, youtube bool) (filename string) {
 		cmdArgs := []string{
 			"--get-filename",
 			enclosureURL}
-		cmd := exec.Command(cmdName, cmdArgs...)
-		cmdOut, err := cmd.Output()
-		if err != nil {
-			log.Fatal(err)
-		}
+		cmdOut := run(cmdName, cmdArgs)
 		filename = strings.Split(string(cmdOut), "\n")[0]
 		return filename
 	}
