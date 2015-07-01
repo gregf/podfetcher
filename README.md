@@ -11,14 +11,9 @@ Podfetcher is a simple Podcast Fetcher written in Go. It will download all your 
 
 ## Install
 
-If you are on `linux amd64` there are binary releases. Check the latest [release](https://github.com/gregf/podfetcher/releases), extract the tarball cd and run make install (sudo not needed).
+If you are on `linux amd64` there are binary releases. Check the latest [release](https://github.com/gregf/podfetcher/releases), extract the tarball and copy the podfetcher binary to some place in your path.
 
-Alterntively you can run `go get github.com/gregf/podfetcher`. See the [Go Install Guide](https://golang.org/doc/install#install) for more information. After which you'll want to copy the example configuration files to your podfetcher config directory. 
-
-```
-mkdir ~/.config/podfetcher
-cp $GOPATH/src/github.com/gregf/podfetcher/examples/* ~/.config/podfetcher/
-```
+Alterntively you can run `go get github.com/gregf/podfetcher`. See the [Go Install Guide](https://golang.org/doc/install#install) for more information.
 
 # Usage
 

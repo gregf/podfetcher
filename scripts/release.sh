@@ -17,9 +17,6 @@ echo "Creating Release"
 mkdir -p release
 go build podfetcher.go
 mv podfetcher release
-cp scripts/Makefile release
-cp examples/config.yml release
-cp examples/feeds release
 
 mv release podfetcher
 

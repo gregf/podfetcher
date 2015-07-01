@@ -14,6 +14,16 @@ import (
 
 var slash = string(os.PathSeparator)
 
+// ConfigPath returns the path to the config file
+func ConfigPath() (path string) {
+	if len(os.Getenv("XDG_CONFIG_HOME")) > 0 {
+		path = filepath.Join(ExpandPath(os.Getenv("XDG_CONFIG_HOME")), "podfetcher", "config.yml")
+	} else {
+		path = filepath.Join(os.Getenv("HOME"), ".config", "podfetcher", "config.yml")
+	}
+	return path
+}
+
 // FeedsPath returns the path to the feeds path
 func FeedsPath() (path string) {
 	return filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "feeds")
