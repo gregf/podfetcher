@@ -3,6 +3,7 @@
 * Add a optional notification after each download
 * Log more useful errors with run commands
 * More useful output for lsnew
+* Auto generate a config file if one is not present
 
 # v0.3 / 2015-06-29
 
