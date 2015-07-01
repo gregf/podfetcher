@@ -23,10 +23,16 @@ const (
 // LsNew prints out episodes where downloaded = false
 func LsNew() {
 	new := database.FindEpisodesWithPodcastTitle()
+	podcastCount := 0
+	episodeCount := 0
 
-	fmt.Printf("Episodes marked with [*] have been filtered\n\n")
+	if len(new) != 0 {
+		fmt.Printf("Episodes marked with [*] have been filtered\n\n")
+	}
 	for podcastTitle, episodeTitle := range new {
+		podcastCount++
 		for _, t := range episodeTitle {
+			episodeCount++
 			var filtered string
 			if filter.Run(podcastTitle, t) {
 				filtered = "[*]"
@@ -41,6 +47,11 @@ func LsNew() {
 				w2,
 				t)
 		}
+	}
+	if len(new) != 0 {
+		fmt.Printf("\n%d episode(s) to consider from %d podcast(s)\n",
+			episodeCount,
+			podcastCount)
 	}
 }
 
