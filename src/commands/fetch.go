@@ -202,6 +202,7 @@ func makeTitle(title string) (t string) {
 	title = strings.Replace(title, "\\", "-", -1)
 	title = strings.Replace(title, "'", "", -1)
 	title = strings.Replace(title, "\"", "", -1)
+	title = strings.Replace(title, ",", "", -1)
 
 	return title
 }
