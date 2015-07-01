@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gregf/podfetcher/src/helpers"
 )
@@ -14,6 +15,11 @@ func Setup() {
 
 	fmt.Println("\nNo configuration file found, auto generating a default config")
 	fmt.Println("New config file can be found at", configFile)
+
+	err := os.MkdirAll(filepath.Dir(configFile), 0755)
+	if err != nil {
+		log.Fatalf("mkdir failed %s\n", err)
+	}
 
 	file, err := os.Create(configFile)
 	if err != nil {
