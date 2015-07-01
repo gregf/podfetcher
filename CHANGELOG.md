@@ -1,6 +1,8 @@
 # Unreleased
 
 * Add a optional notification after each download
+* Log more useful errors with run commands
+* More useful output for lsnew
 
 # v0.3 / 2015-06-29
 
