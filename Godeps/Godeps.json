@@ -8,6 +8,10 @@
 			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
 		},
 		{
+			"ImportPath": "github.com/cevaris/ordered_map",
+			"Rev": "7ec217774c8f906e32d6f49060bdacdf9237d767"
+		},
+		{
 			"ImportPath": "github.com/cheggaaa/pb",
 			"Rev": "e648e12b78cedf14ebb2fc1855033f07b034cfbb"
 		},

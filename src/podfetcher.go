@@ -80,6 +80,13 @@ func Execute() {
 		},
 	}
 
+	var cmdLsCasts = &cobra.Command{
+		Use:   "lscasts",
+		Short: "Displays a list of subscribed podcasts",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.LsCasts()
+		},
+	}
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
 	rootCmd.AddCommand(
 		cmdVersion,
@@ -88,7 +95,8 @@ func Execute() {
 		cmdCatchUp,
 		cmdLsNew,
 		cmdImport,
-		cmdAdd)
+		cmdAdd,
+		cmdLsCasts)
 	rootCmd.Execute()
 	unLock(lf)
 }
