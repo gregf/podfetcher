@@ -3,9 +3,10 @@ package commands
 import (
 	"fmt"
 
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/apcera/termtables"
+
 	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/filter"
-	"github.com/gregf/podfetcher/src/helpers"
 )
 
 // LsNew prints out episodes where downloaded = false
@@ -14,9 +15,16 @@ func LsNew() {
 	podcastCount := 0
 	episodeCount := 0
 
-	if len(new) != 0 {
-		fmt.Printf("Episodes marked with [*] have been filtered\n\n")
+	table := termtables.CreateTable()
+	table.AddHeaders("Filtered", "Podcast", "Episode Title")
+	var ts = &termtables.TableStyle{
+		SkipBorder: true,
+		BorderX:    "", BorderY: "", BorderI: "",
+		PaddingLeft: 0, PaddingRight: 2,
+		Width:     80,
+		Alignment: termtables.AlignLeft,
 	}
+	table.Style = ts
 	for podcastTitle, episodeTitle := range new {
 		podcastCount++
 		for _, t := range episodeTitle {
@@ -25,17 +33,11 @@ func LsNew() {
 			if filter.Run(podcastTitle, t) {
 				filtered = "[*]"
 			}
-			w1 := int(helpers.GetWidth() / 4)
-			w2 := int(helpers.GetWidth() / 2)
-			fmt.Printf("%-3s %-*.*s - %-.*s\n",
-				filtered,
-				w1,
-				w1,
-				podcastTitle,
-				w2,
-				t)
+			table.AddRow(filtered, podcastTitle, t)
 		}
 	}
+	fmt.Println(table.Render())
+
 	if len(new) != 0 {
 		fmt.Printf("\n%d episode(s) to consider from %d podcast(s)\n",
 			episodeCount,

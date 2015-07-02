@@ -3,19 +3,26 @@ package commands
 import (
 	"fmt"
 
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/apcera/termtables"
+
 	"github.com/gregf/podfetcher/src/database"
-	"github.com/gregf/podfetcher/src/helpers"
 )
 
 // LsCasts displays a list of podcasts you are subscribed to.
 func LsCasts() {
 	ids, titles := database.FindAllPodcasts()
-
-	for i, id := range ids {
-		w1 := int(helpers.GetWidth() - 5)
-		fmt.Printf("%d - %.*s\n",
-			id,
-			w1,
-			titles[i])
+	table := termtables.CreateTable()
+	var ts = &termtables.TableStyle{
+		SkipBorder: true,
+		BorderX:    "", BorderY: "", BorderI: "",
+		PaddingLeft: 0, PaddingRight: 2,
+		Width:     80,
+		Alignment: termtables.AlignLeft,
 	}
+	table.Style = ts
+	table.AddHeaders("ID", "Podcast Title")
+	for i, id := range ids {
+		table.AddRow(id, titles[i])
+	}
+	fmt.Println(table.Render())
 }

@@ -8,6 +8,10 @@
 			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
 		},
 		{
+			"ImportPath": "github.com/apcera/termtables",
+			"Rev": "be44afb7779fac2e35b57717ee00d77e0e6698ed"
+		},
+		{
 			"ImportPath": "github.com/cheggaaa/pb",
 			"Rev": "e648e12b78cedf14ebb2fc1855033f07b034cfbb"
 		},
