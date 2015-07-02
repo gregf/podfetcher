@@ -5,22 +5,17 @@ import (
 
 	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/helpers"
-
-	// Required for Iter function
-	_ "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/cevaris/ordered_map"
 )
 
 // LsCasts displays a list of podcasts you are subscribed to.
 func LsCasts() {
-	casts := database.FindAllPodcasts()
+	ids, titles := database.FindAllPodcasts()
 
-	for kv := range casts.Iter() {
+	for i, id := range ids {
 		w1 := int(helpers.GetWidth() - 5)
-		id := kv.Key
-		title := kv.Value
 		fmt.Printf("%d - %.*s\n",
 			id,
 			w1,
-			title)
+			titles[i])
 	}
 }

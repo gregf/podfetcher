@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/cevaris/ordered_map"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	// required by gorm
 	_ "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/mattn/go-sqlite3"
@@ -122,7 +121,7 @@ func FindNewEpisodes() (urls []string, err error) {
 }
 
 // FindAllPodcasts Find all podcasts and their IDs
-func FindAllPodcasts() *ordered_map.OrderedMap {
+func FindAllPodcasts() (ids []int, titles []string) {
 	db := DBSession()
 	db.LogMode(false)
 
@@ -132,17 +131,15 @@ func FindAllPodcasts() *ordered_map.OrderedMap {
 	}
 	defer rows.Close()
 
-	// Init new ordered map
-	om := ordered_map.NewOrderedMap()
-
 	for rows.Next() {
 		var ID int
 		var title string
 		rows.Scan(&ID, &title)
-		om.Set(ID, title)
+		ids = append(ids, ID)
+		titles = append(titles, title)
 	}
 
-	return om
+	return ids, titles
 }
 
 // findPodcastID locates podcast ID by rssURL
