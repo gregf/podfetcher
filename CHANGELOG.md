@@ -4,6 +4,7 @@
 * Log more useful errors with run commands
 * More useful output for lsnew
 * Auto generate a config file if one is not present
+* lscasts to display a list of podcasts with there id
 
 # v0.3 / 2015-06-29
 
