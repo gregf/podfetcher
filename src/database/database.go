@@ -15,6 +15,7 @@ type Podcast struct {
 	ID       int `sql:"index"`
 	Title    string
 	RssURL   string `sql:"unique_index"`
+	Paused   bool
 	Episodes []Episode
 }
 
@@ -44,7 +45,7 @@ func init() {
 	db := DBSession()
 	db.LogMode(false)
 
-	db.CreateTable(&Podcast{})
+	db.CreateTable(&Podcast{Paused: false})
 	db.CreateTable(&Episode{})
 	db.AutoMigrate(&Podcast{}, &Episode{})
 }
@@ -108,13 +109,18 @@ func FindNewEpisodes() (urls []string, err error) {
 
 	rows, err := db.Table("episodes").
 		Where("downloaded = ?", false).
-		Select("enclosure_url").
+		Select("podcast_id, enclosure_url").
 		Rows()
 	defer rows.Close()
 
 	for rows.Next() {
 		var enclosureURL string
-		rows.Scan(&enclosureURL)
+		var podcastID int
+		rows.Scan(&podcastID, &enclosureURL)
+		paused := FindPodcastPausedState(podcastID)
+		if paused {
+			return
+		}
 		urls = append(urls, enclosureURL)
 	}
 	return urls, err
@@ -228,8 +234,53 @@ func FindEpisodesWithPodcastTitle() (m map[string][]string) {
 			Select("title").
 			Row()
 		row.Scan(&title)
+
+		paused := FindPodcastPausedState(podcastID)
+		if paused {
+			return
+		}
+
 		m[title] = append(m[title], eptitle)
 	}
 
 	return m
+}
+
+//FindPodcastPausedState finds out wether or not a podcast is paused
+func FindPodcastPausedState(id int) (paused bool) {
+	db := DBSession()
+	db.LogMode(false)
+
+	row := db.Table("podcasts").Where("id = ?", id).Select("paused").Row()
+	row.Scan(&paused)
+
+	return paused
+}
+
+//TogglePause toggles between paused states true and false
+func TogglePause(id int) (paused bool) {
+	db := DBSession()
+	db.LogMode(false)
+
+	state := FindPodcastPausedState(id)
+	paused = false
+	if state == false {
+		paused = true
+	}
+
+	db.Table("podcasts").Where("id = ?", id).
+		UpdateColumn("paused", paused)
+
+	return paused
+}
+
+// FindPodcastTitle looks up a podcast title by its id
+func FindPodcastTitle(id int) (title string) {
+	db := DBSession()
+	db.LogMode(false)
+
+	row := db.Table("podcasts").Where("id = ?", id).Select("title").Row()
+	row.Scan(&title)
+
+	return title
 }

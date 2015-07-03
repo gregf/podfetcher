@@ -24,6 +24,8 @@ func Execute() {
 	createLock(lf)
 	trapInit(lf)
 
+	var podcastID int
+
 	var cmdVersion = &cobra.Command{
 		Use:   "version",
 		Short: "Print the version number of Hugo",
@@ -87,6 +89,17 @@ func Execute() {
 			commands.LsCasts()
 		},
 	}
+
+	var cmdPause = &cobra.Command{
+		Use:   "pause",
+		Short: "Toggles between paused states.",
+		Long:  "Toggles between paused states. Paused Podcasts are ignored.",
+		Run: func(cmd *cobra.Command, args []string) {
+			commands.Pause(podcastID)
+		},
+	}
+
+	cmdPause.Flags().IntVarP(&podcastID, "cast", "c", 0, "Podcast ID")
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
 	rootCmd.AddCommand(
 		cmdVersion,
@@ -96,7 +109,8 @@ func Execute() {
 		cmdLsNew,
 		cmdImport,
 		cmdAdd,
-		cmdLsCasts)
+		cmdLsCasts,
+		cmdPause)
 	rootCmd.Execute()
 	unLock(lf)
 }
