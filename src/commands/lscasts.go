@@ -13,8 +13,7 @@ func LsCasts() {
 	ids, titles := database.FindAllPodcasts()
 	table := termtables.CreateTable()
 	var ts = &termtables.TableStyle{
-		SkipBorder: true,
-		BorderX:    "", BorderY: "", BorderI: "",
+		SkipBorder:  true,
 		PaddingLeft: 0, PaddingRight: 2,
 		Width:     80,
 		Alignment: termtables.AlignLeft,

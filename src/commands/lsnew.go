@@ -18,8 +18,7 @@ func LsNew() {
 	table := termtables.CreateTable()
 	table.AddHeaders("Filtered", "Podcast", "Episode Title")
 	var ts = &termtables.TableStyle{
-		SkipBorder: true,
-		BorderX:    "", BorderY: "", BorderI: "",
+		SkipBorder:  true,
 		PaddingLeft: 0, PaddingRight: 2,
 		Width:     80,
 		Alignment: termtables.AlignLeft,
@@ -36,9 +35,9 @@ func LsNew() {
 			table.AddRow(filtered, podcastTitle, t)
 		}
 	}
-	fmt.Println(table.Render())
 
 	if len(new) != 0 {
+		fmt.Println(table.Render())
 		fmt.Printf("\n%d episode(s) to consider from %d podcast(s)\n",
 			episodeCount,
 			podcastCount)
