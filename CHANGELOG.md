@@ -1,4 +1,4 @@
-# Unreleased
+# v0.4 / 2015-07-04
 
 * Add a optional notification after each download
 * Log more useful errors with run commands

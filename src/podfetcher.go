@@ -14,7 +14,7 @@ import (
 )
 
 // Podfetcher Version number
-const podFetcherVersion = "v0.3"
+const podFetcherVersion = "v0.4"
 
 // Execute parses command line args and fires up commands
 func Execute() {
