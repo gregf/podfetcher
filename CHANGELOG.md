@@ -6,6 +6,7 @@
 * Auto generate a config file if one is not present
 * lscasts to display a list of podcasts with there id
 * Add the ability to pause a subscription
+* Add the ability to catchup on a single podcast
 
 # v0.3 / 2015-06-29
 
