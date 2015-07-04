@@ -20,7 +20,7 @@ mv podfetcher release
 
 mv release podfetcher
 
-tar cfav podfetcher.tar.bz2 podfetcher
+tar cfav podfetcher-linux-amd64.tar.bz2 podfetcher
 rm -rf podfetcher
 
 LOG="$(git log --pretty=oneline --abbrev-commit "$CURRENT"..HEAD)"
@@ -37,8 +37,8 @@ github-release upload \
 --user gregf \
 --repo podfetcher \
 --tag "$RELEASE" \
---name "podfetcher.tar.bz2" \
---file "podfetcher.tar.bz2"
+--name "podfetcher-linux-amd64.tar.bz2" \
+--file "podfetcher-linux-amd64.tar.bz2"
 
 rm -rf release
-rm -f podfetcher.tar.bz2
+rm -f podfetcher-linux-amd64.tar.bz2
