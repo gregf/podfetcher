@@ -5,6 +5,6 @@ import (
 )
 
 // CatchUp marks all episodes downloaded = true
-func CatchUp() {
-	database.CatchUp()
+func CatchUp(id int) {
+	database.CatchUp(id)
 }

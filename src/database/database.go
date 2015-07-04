@@ -172,9 +172,15 @@ func AddItem(items map[string]string) {
 }
 
 // CatchUp Marks all downloaded = false to be downloaded = true
-func CatchUp() {
-	db.Table("episodes").Where("downloaded = ?", false).
-		UpdateColumn("downloaded", true)
+func CatchUp(id int) {
+	if id == 0 {
+		db.Table("episodes").Where("downloaded = ?", false).
+			UpdateColumn("downloaded", true)
+	} else {
+		db.Table("episodes").Where("podcast_id = ?", id).
+			Where("downloaded = ?", false).
+			UpdateColumn("downloaded", true)
+	}
 }
 
 // FindEpisodesWithPodcastTitle Finds episodes with their podcast title and

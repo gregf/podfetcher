@@ -54,7 +54,7 @@ func Execute() {
 		Use:   "catchup",
 		Short: "Marks all podcast episodes as downloaded",
 		Run: func(cmd *cobra.Command, args []string) {
-			commands.CatchUp()
+			commands.CatchUp(podcastID)
 		},
 	}
 
@@ -100,6 +100,7 @@ func Execute() {
 	}
 
 	cmdPause.Flags().IntVarP(&podcastID, "cast", "c", 0, "Podcast ID")
+	cmdCatchUp.Flags().IntVarP(&podcastID, "cast", "c", 0, "Podcast ID")
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
 	rootCmd.AddCommand(
 		cmdVersion,
