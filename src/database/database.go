@@ -10,6 +10,8 @@ import (
 	_ "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/mattn/go-sqlite3"
 )
 
+var db gorm.DB
+
 // Podcast struct
 type Podcast struct {
 	ID       int `sql:"index"`
@@ -42,29 +44,20 @@ func databasePath() (path string) {
 }
 
 func init() {
-	db := DBSession()
-	db.LogMode(false)
+	var err error
+	db, err = gorm.Open("sqlite3", databasePath())
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	db.LogMode(false)
 	db.CreateTable(&Podcast{Paused: false})
 	db.CreateTable(&Episode{})
 	db.AutoMigrate(&Podcast{}, &Episode{})
 }
 
-// DBSession sets up a database session
-func DBSession() (db gorm.DB) {
-	sqliteSession, err := gorm.Open("sqlite3", databasePath())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return sqliteSession
-}
-
 // SetDownloadedByURL updates all downloaded columns to be true
 func SetDownloadedByURL(url string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	db.Table("episodes").
 		Where("enclosure_url = ?", url).
 		UpdateColumn("downloaded", true)
@@ -72,9 +65,6 @@ func SetDownloadedByURL(url string) {
 
 // FindEpisodeTitleByURL finds episode titles by url
 func FindEpisodeTitleByURL(url string) (title string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	row := db.Table("episodes").
 		Where("enclosure_url = ?", url).
 		Select("title").
@@ -86,9 +76,6 @@ func FindEpisodeTitleByURL(url string) (title string) {
 
 // FindPodcastTitleByURL finds podcast titles by URL
 func FindPodcastTitleByURL(url string) (title string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	var podcastID int
 	row := db.Table("episodes").Where("enclosure_url = ?", url).Select("podcast_id").Row()
 	row.Scan(&podcastID)
@@ -104,9 +91,6 @@ func FindPodcastTitleByURL(url string) (title string) {
 
 // FindNewEpisodes finds episodes where downloaded = false
 func FindNewEpisodes() (urls []string, err error) {
-	db := DBSession()
-	db.LogMode(false)
-
 	rows, err := db.Table("episodes").
 		Where("downloaded = ?", false).
 		Select("podcast_id, enclosure_url").
@@ -128,9 +112,6 @@ func FindNewEpisodes() (urls []string, err error) {
 
 // FindAllPodcasts Find all podcasts and their IDs
 func FindAllPodcasts() (ids []int, titles []string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	rows, err := db.Table("podcasts").Select("id, title").Rows()
 	if err != nil {
 		log.Fatal(err)
@@ -150,9 +131,6 @@ func FindAllPodcasts() (ids []int, titles []string) {
 
 // findPodcastID locates podcast ID by rssURL
 func findPodcastID(rssurl string) (podcastID int) {
-	db := DBSession()
-	db.LogMode(false)
-
 	row := db.Table("podcasts").
 		Where("rss_url = ?", rssurl).
 		Select("id").
@@ -163,9 +141,6 @@ func findPodcastID(rssurl string) (podcastID int) {
 
 // AddPodcast Inserts a new podcast into the database
 func AddPodcast(title, rssurl string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	podcast := Podcast{
 		Title:  title,
 		RssURL: rssurl,
@@ -180,9 +155,6 @@ func AddPodcast(title, rssurl string) {
 //
 // item[rssURL] item[title], item[enclosureURL], item[guid], items[pubdate]
 func AddItem(items map[string]string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	podcastID := findPodcastID(items["rssURL"])
 
 	episode := Episode{
@@ -201,9 +173,6 @@ func AddItem(items map[string]string) {
 
 // CatchUp Marks all downloaded = false to be downloaded = true
 func CatchUp() {
-	db := DBSession()
-	db.LogMode(false)
-
 	db.Table("episodes").Where("downloaded = ?", false).
 		UpdateColumn("downloaded", true)
 }
@@ -211,9 +180,6 @@ func CatchUp() {
 // FindEpisodesWithPodcastTitle Finds episodes with their podcast title and
 // returns a map[string]string
 func FindEpisodesWithPodcastTitle() (m map[string][]string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	rows, err := db.Table("Episodes").
 		Where("downloaded = ?", false).
 		Select("title, podcast_id").
@@ -248,9 +214,6 @@ func FindEpisodesWithPodcastTitle() (m map[string][]string) {
 
 //FindPodcastPausedState finds out wether or not a podcast is paused
 func FindPodcastPausedState(id int) (paused bool) {
-	db := DBSession()
-	db.LogMode(false)
-
 	row := db.Table("podcasts").Where("id = ?", id).Select("paused").Row()
 	row.Scan(&paused)
 
@@ -259,9 +222,6 @@ func FindPodcastPausedState(id int) (paused bool) {
 
 //TogglePause toggles between paused states true and false
 func TogglePause(id int) (paused bool) {
-	db := DBSession()
-	db.LogMode(false)
-
 	state := FindPodcastPausedState(id)
 	paused = false
 	if state == false {
@@ -276,9 +236,6 @@ func TogglePause(id int) (paused bool) {
 
 // FindPodcastTitle looks up a podcast title by its id
 func FindPodcastTitle(id int) (title string) {
-	db := DBSession()
-	db.LogMode(false)
-
 	row := db.Table("podcasts").Where("id = ?", id).Select("title").Row()
 	row.Scan(&title)
 
