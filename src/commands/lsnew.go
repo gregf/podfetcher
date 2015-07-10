@@ -30,7 +30,7 @@ func LsNew() {
 			episodeCount++
 			var filtered string
 			if filter.Run(podcastTitle, t) {
-				filtered = "[*]"
+				filtered = "✓"
 			}
 			table.AddRow(filtered, podcastTitle, t)
 		}
