@@ -103,15 +103,15 @@ func Execute() {
 	cmdCatchUp.Flags().IntVarP(&podcastID, "cast", "c", 0, "Podcast ID")
 	var rootCmd = &cobra.Command{Use: "podfetcher"}
 	rootCmd.AddCommand(
-		cmdVersion,
-		cmdUpdate,
-		cmdFetch,
-		cmdCatchUp,
-		cmdLsNew,
-		cmdImport,
 		cmdAdd,
+		cmdCatchUp,
+		cmdFetch,
+		cmdImport,
 		cmdLsCasts,
-		cmdPause)
+		cmdLsNew,
+		cmdPause,
+		cmdUpdate,
+		cmdVersion)
 	rootCmd.Execute()
 	unLock(lf)
 }
