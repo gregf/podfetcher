@@ -94,6 +94,13 @@ func Execute() {
 		Use:   "pause",
 		Short: "Toggles between paused states.",
 		Long:  "Toggles between paused states. Paused Podcasts are ignored.",
+		PreRun: func(cmd *cobra.Command, args []string) {
+			if podcastID == 0 {
+				fmt.Println("It looks like you forget to set --cast ID")
+				fmt.Println("You can get --cast ID from lspodcasts")
+				os.Exit(1)
+			}
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			commands.Pause(podcastID)
 		},
