@@ -12,6 +12,10 @@
 			"Rev": "be44afb7779fac2e35b57717ee00d77e0e6698ed"
 		},
 		{
+			"ImportPath": "github.com/caarlos0/gohome",
+			"Rev": "cd5c2de81f9a69802902a08487bf8c3f6d9bb0e0"
+		},
+		{
 			"ImportPath": "github.com/cheggaaa/pb",
 			"Rev": "e648e12b78cedf14ebb2fc1855033f07b034cfbb"
 		},

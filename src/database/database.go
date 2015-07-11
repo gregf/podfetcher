@@ -5,12 +5,15 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/caarlos0/gohome"
 	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	// required by gorm
 	_ "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/mattn/go-sqlite3"
 )
 
 var db gorm.DB
+
+const appName = "podfetcher"
 
 // Podcast struct
 type Podcast struct {
@@ -33,12 +36,7 @@ type Episode struct {
 }
 
 func databasePath() (path string) {
-	if len(os.Getenv("XDG_CACHE_HOME")) > 0 {
-		path = filepath.Join(os.Getenv("XDG_CACHE_HOME"), "podfetcher")
-		os.MkdirAll(path, 0755)
-		return filepath.Join(path, "cache.db")
-	}
-	path = filepath.Join(os.Getenv("HOME"), ".cache", "podfetcher")
+	path = gohome.Cache(appName)
 	os.MkdirAll(path, 0755)
 	return filepath.Join(path, "cache.db")
 }
