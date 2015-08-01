@@ -18,7 +18,7 @@ test -z "$(golint src | tee /dev/stderr)"
 echo "go vet..."
 go vet ./src/...
 echo "go test..."
-env GORACE="halt_on_error=1" go test -v -race ./src/...
+env GORACE="halt_on_error=1" go test -v -race
 
 # Run test coverage on each subdirectories and merge the coverage profile.
 
