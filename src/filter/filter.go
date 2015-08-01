@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
+	"github.com/spf13/viper"
 )
 
 // Run filters podcasts based on filters from config.yml

@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/caarlos0/gohome"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/caarlos0/gohome"
+	"github.com/jinzhu/gorm"
 	// required by gorm
-	_ "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var db gorm.DB

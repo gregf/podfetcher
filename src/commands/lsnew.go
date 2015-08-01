@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/apcera/termtables"
+	"github.com/apcera/termtables"
 
 	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/filter"

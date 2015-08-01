@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/cheggaaa/pb"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/juju/deputy"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
+	"github.com/cheggaaa/pb"
+	"github.com/juju/deputy"
+	"github.com/spf13/viper"
 
 	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/filter"

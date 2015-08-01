@@ -7,10 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/nightlyone/lockfile"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/cobra"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/src/commands"
+
+	"github.com/nightlyone/lockfile"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // Podfetcher Version number

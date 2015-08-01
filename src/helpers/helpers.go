@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/caarlos0/gohome"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
+	"github.com/caarlos0/gohome"
+	"github.com/spf13/viper"
 )
 
 var slash = string(os.PathSeparator)

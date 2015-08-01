@@ -6,10 +6,10 @@ import (
 	"log"
 	"strings"
 
-	rss "github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/jteeuwen/go-pkg-rss"
-	"github.com/gregf/podfetcher/Godeps/_workspace/src/github.com/spf13/viper"
 	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/helpers"
+	rss "github.com/jteeuwen/go-pkg-rss"
+	"github.com/spf13/viper"
 )
 
 var enclosureError = "%s is missing a enclosure url"
