@@ -1,5 +1,10 @@
 # TODO
 
+* Move database calls into commands, This should simplify things a bit
+* Sanitize filepaths/names with https://github.com/kennygrant/sanitize
+* Get rid of termtables and display tables manually
+* Display podcast id and episode ids where it makes sense
+* Fetch command should take a castid
 * Transaction support so we hopefully don't have to use the lockfile in the future
 * Inclusive filter
 * lsepisodes (takes a podcast name)
