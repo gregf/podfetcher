@@ -23,6 +23,7 @@ func Execute() {
 
 	initConfig()
 	createLock(lf)
+	defer unLock(lf)
 	trapInit(lf)
 
 	var podcastID int
@@ -121,7 +122,6 @@ func Execute() {
 		cmdUpdate,
 		cmdVersion)
 	rootCmd.Execute()
-	unLock(lf)
 }
 
 func initConfig() {
