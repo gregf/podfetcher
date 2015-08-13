@@ -15,7 +15,9 @@ func Add(args []string) {
 		return
 	}
 
-	file, err := os.OpenFile(helpers.FeedsPath(), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(helpers.FeedsPath(),
+		os.O_CREATE|os.O_APPEND|os.O_WRONLY,
+		0644)
 	if err != nil {
 		log.Fatal(err)
 	}

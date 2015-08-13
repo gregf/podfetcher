@@ -1,15 +1,11 @@
 package commands
 
-import (
-	"fmt"
-
-	"github.com/gregf/podfetcher/src/database"
-)
+import "fmt"
 
 // Pause pauses toggles the pause state of a podcast, which pauses new downloads.
-func Pause(id int) {
-	state := database.TogglePause(id)
-	title := database.FindPodcastTitle(id)
+func (env *Env) Pause(id int) {
+	state := env.db.TogglePause(id)
+	title := env.db.FindPodcastTitle(id)
 	pausestate := pausestate(state)
 
 	fmt.Printf("%s is now %s\n", title, pausestate)

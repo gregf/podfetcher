@@ -6,9 +6,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/helpers"
 	rss "github.com/jteeuwen/go-pkg-rss"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
@@ -16,14 +16,14 @@ var enclosureError = "%s is missing a enclosure url"
 
 // Update loops over the feeds file and inserts podcasts + episodes into the
 // database.
-func Update() {
+func (env *Env) Update(cmd *cobra.Command, args []string) {
 	feeds, err := helpers.ReadFeeds(helpers.FeedsPath())
 	if err != nil {
 		log.Fatalf("readLines: %s", err)
 	}
 
 	for _, feedURL := range feeds {
-		feed := rss.New(0, true, chanHandler, itemHandler)
+		feed := rss.New(0, true, chanHandler, env.itemHandler)
 		err := feed.Fetch(feedURL, nil)
 		if err != nil {
 			log.Println(err)
@@ -31,8 +31,8 @@ func Update() {
 	}
 }
 
-func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
-	database.AddPodcast(ch.Title, f.Url)
+func (env *Env) itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
+	env.db.AddPodcast(ch.Title, f.Url)
 
 	var maxEpisodes = viper.GetInt("main.episodes")
 	var items []*rss.Item
@@ -68,7 +68,7 @@ func itemHandler(f *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 		} else {
 			items["guid"] = item.PubDate + f.Url
 		}
-		database.AddItem(items)
+		env.db.AddItem(items)
 	}
 }
 

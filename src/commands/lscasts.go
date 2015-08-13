@@ -4,13 +4,12 @@ import (
 	"fmt"
 
 	"github.com/apcera/termtables"
-
-	"github.com/gregf/podfetcher/src/database"
+	"github.com/spf13/cobra"
 )
 
 // LsCasts displays a list of podcasts you are subscribed to.
-func LsCasts() {
-	ids, titles := database.FindAllPodcasts()
+func (env *Env) LsCasts(cmd *cobra.Command, args []string) {
+	ids, titles := env.db.FindAllPodcasts()
 	table := termtables.CreateTable()
 	var ts = &termtables.TableStyle{
 		SkipBorder:  true,

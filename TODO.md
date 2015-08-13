@@ -20,3 +20,4 @@
 * Tests! Start with something simple like helpers
 * Improve comments
 * Add some color? Make sure users can turn this off.
+* Compare .config/podfetcher/feeds with list in database & remove feeds no longer in feeds file

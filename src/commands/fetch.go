@@ -14,9 +14,9 @@ import (
 
 	"github.com/cheggaaa/pb"
 	"github.com/juju/deputy"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/gregf/podfetcher/src/database"
 	"github.com/gregf/podfetcher/src/filter"
 	"github.com/gregf/podfetcher/src/helpers"
 )
@@ -29,32 +29,32 @@ type Params struct {
 }
 
 // Fetch loops through episodes where downloaded = false and downloads them.
-func Fetch() {
-	urls, err := database.FindNewEpisodes()
+func (env *Env) Fetch(cmd *cobra.Command, args []string) {
+	urls, err := env.db.FindNewEpisodes()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, url := range urls {
-		podcastTitle := database.FindPodcastTitleByURL(url)
-		episodeTitle := database.FindEpisodeTitleByURL(url)
-		download(podcastTitle, episodeTitle, url)
+		podcastTitle := env.db.FindPodcastTitleByURL(url)
+		episodeTitle := env.db.FindEpisodeTitleByURL(url)
+		env.download(podcastTitle, episodeTitle, url)
 	}
 }
 
-func download(podcastTitle, episodeTitle, url string) {
+func (env *Env) download(podcastTitle, episodeTitle, url string) {
 	if filter.Run(podcastTitle, episodeTitle) {
 		fmt.Printf("Filtered: %s - %s\n", podcastTitle, episodeTitle)
-		database.SetDownloadedByURL(url)
+		env.db.SetDownloadedByURL(url)
 		return
 	}
 	fmt.Printf("Downloading: %s - %s\n", podcastTitle, episodeTitle)
 	if strings.Contains(strings.ToLower(url), "youtube.com") {
-		downloader(Params{url: getYoutubeURL(url), yturl: url, youtube: true})
+		env.downloader(Params{url: getYoutubeURL(url), yturl: url, youtube: true})
 	} else {
-		downloader(Params{url: url, youtube: false})
+		env.downloader(Params{url: url, youtube: false})
 	}
-	database.SetDownloadedByURL(url)
+	env.db.SetDownloadedByURL(url)
 	notify(podcastTitle, episodeTitle)
 }
 
@@ -84,15 +84,15 @@ func notify(podcastTitle, episodeTitle string) {
 	run(cmdName, cmdArgs)
 }
 
-func downloader(p Params) {
+func (env *Env) downloader(p Params) {
 	var fileName string
 	var title string
 	if p.youtube {
 		fileName = getFileName(p.yturl, p.youtube)
-		title = makeTitle(database.FindPodcastTitleByURL(p.yturl))
+		title = makeTitle(env.db.FindPodcastTitleByURL(p.yturl))
 	} else {
 		fileName = getFileName(p.url, p.youtube)
-		title = makeTitle(database.FindPodcastTitleByURL(p.url))
+		title = makeTitle(env.db.FindPodcastTitleByURL(p.url))
 	}
 
 	dlDir := helpers.ExpandPath(viper.GetString("main.download"))

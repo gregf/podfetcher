@@ -1,7 +1,7 @@
 package main
 
-import "github.com/gregf/podfetcher/src"
+import "github.com/gregf/podfetcher/src/commands"
 
 func main() {
-	podfetcher.Execute()
+	commands.Execute()
 }

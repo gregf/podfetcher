@@ -1,4 +1,4 @@
-package podfetcher
+package commands
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gregf/podfetcher/src/commands"
+	"github.com/gregf/podfetcher/src/database"
 
 	"github.com/nightlyone/lockfile"
 	"github.com/spf13/cobra"
@@ -17,6 +17,11 @@ import (
 // Podfetcher Version number
 const podFetcherVersion = "v0.4"
 
+// Env struct
+type Env struct {
+	db database.Datastore
+}
+
 // Execute parses command line args and fires up commands
 func Execute() {
 	lf := "/tmp/podfetcher.lock"
@@ -25,6 +30,13 @@ func Execute() {
 	createLock(lf)
 	defer unLock(lf)
 	trapInit(lf)
+
+	db, err := database.NewDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	env := &Env{db}
 
 	var podcastID int
 
@@ -39,40 +51,34 @@ func Execute() {
 	var cmdUpdate = &cobra.Command{
 		Use:   "update",
 		Short: "Updates the database with the latest episodes to be fetched.",
-		Run: func(cmd *cobra.Command, args []string) {
-			commands.Update()
-		},
+		Run:   env.Update,
 	}
 
 	var cmdFetch = &cobra.Command{
 		Use:   "fetch",
 		Short: "Fetches podcast episodes that have not been downloaded.",
-		Run: func(cmd *cobra.Command, args []string) {
-			commands.Fetch()
-		},
+		Run:   env.Fetch,
 	}
 
 	var cmdCatchUp = &cobra.Command{
 		Use:   "catchup",
 		Short: "Marks all podcast episodes as downloaded",
 		Run: func(cmd *cobra.Command, args []string) {
-			commands.CatchUp(podcastID)
+			env.CatchUp(podcastID)
 		},
 	}
 
 	var cmdLsNew = &cobra.Command{
 		Use:   "lsnew",
 		Short: "Display new episodes to be downloaded.",
-		Run: func(cmd *cobra.Command, args []string) {
-			commands.LsNew()
-		},
+		Run:   env.LsNew,
 	}
 
 	var cmdImport = &cobra.Command{
 		Use:   "import",
 		Short: "Import feeds from a opml file.",
 		Run: func(cmd *cobra.Command, args []string) {
-			commands.Import(args)
+			Import(args)
 		},
 	}
 
@@ -80,16 +86,14 @@ func Execute() {
 		Use:   "add",
 		Short: "Add a feed to your feeds file.",
 		Run: func(cmd *cobra.Command, args []string) {
-			commands.Add(args)
+			Add(args)
 		},
 	}
 
 	var cmdLsCasts = &cobra.Command{
 		Use:   "lscasts",
 		Short: "Displays a list of subscribed podcasts",
-		Run: func(cmd *cobra.Command, args []string) {
-			commands.LsCasts()
-		},
+		Run:   env.LsCasts,
 	}
 
 	var cmdPause = &cobra.Command{
@@ -104,7 +108,7 @@ func Execute() {
 			}
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			commands.Pause(podcastID)
+			env.Pause(podcastID)
 		},
 	}
 
@@ -134,7 +138,7 @@ func initConfig() {
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Printf("Fatal error config file %s\n", err)
-		commands.Setup()
+		Setup()
 		return
 	}
 }
