@@ -1,3 +1,11 @@
+# v0.5 / Unreleased
+
+* Replace custom downloader with github.com/cavaliercoder/grab
+* Remove PBv1 dependency
+* Fix gorm errors
+* Lock down gohome version to v1
+* Use dep instead of glide
+
 # v0.4 / 2015-07-04
 
 * Add a optional notification after each download
