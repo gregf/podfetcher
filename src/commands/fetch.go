@@ -56,7 +56,9 @@ func (env *Env) download(podcastTitle, episodeTitle, url string) {
 	}
 	if s {
 		env.db.SetDownloadedByURL(url)
-		notify(podcastTitle, episodeTitle)
+		notify(fmt.Sprintf("Fetched: %s - %s", podcastTitle, episodeTitle))
+	} else {
+		notify(fmt.Sprintf("Failed: %s - %s", podcastTitle, episodeTitle))
 	}
 }
 
@@ -73,11 +75,11 @@ func run(cmdName string, cmdArgs []string) (cmdOut string) {
 	return cmdOut
 }
 
-func notify(podcastTitle, episodeTitle string) {
+func notify(msg string) {
 	cmdName := viper.GetString("main.notify-program")
 	cmdArgs := []string{
 		"podfetcher:",
-		fmt.Sprintf("Fetched: %s - %s", podcastTitle, episodeTitle),
+		fmt.Sprintf("%s", msg),
 	}
 	if len(cmdName) <= 0 {
 		return
