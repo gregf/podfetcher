@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gregf/podfetcher/src/helpers"
-	rss "github.com/jteeuwen/go-pkg-rss"
+	rss "github.com/mattn/go-pkg-rss"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
