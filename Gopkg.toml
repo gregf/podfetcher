@@ -27,7 +27,15 @@
 
 [[constraint]]
   branch = "master"
+  name = "code.cloudfoundry.org/bytefmt"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/apcera/termtables"
+
+[[constraint]]
+  name = "github.com/cavaliercoder/grab"
+  version = "2.0.0"
 
 [[constraint]]
   name = "github.com/gilliek/go-opml"
@@ -60,10 +68,6 @@
 [[constraint]]
   name = "gopkg.in/caarlos0/gohome.v1"
   version = "1.0.0"
-
-[[constraint]]
-  name = "gopkg.in/cheggaaa/pb.v1"
-  version = "1.0.25"
 
 [prune]
   go-tests = true

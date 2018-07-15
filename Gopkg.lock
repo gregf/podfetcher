@@ -99,8 +99,7 @@
 [[projects]]
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
-  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
-  version = "v0.0.2"
+  revision = "14207d285c6c197daabb5c9793d63e7af9ab2d50"
 
 [[projects]]
   name = "github.com/mattn/go-sqlite3"
@@ -112,7 +111,7 @@
   branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "bb74f1db0675b241733089d5a1faa5dd8b0ef57b"
+  revision = "f15292f7a699fcc1a38a80977f80a046874ba8ac"
 
 [[projects]]
   branch = "master"
@@ -169,7 +168,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "1b2967e3c290b7c545b3db0deeda16e9be4f98a2"
+  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -199,6 +198,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7dc2acdf046be5f85893047eb45ed971a3cdd3e5d2e1bc3d608fe591cc31c495"
+  inputs-digest = "0eace6cdf8ea8ffdaca2af83016570d0444d45d533822c0cd0687c341ed5a4e2"
   solver-name = "gps-cdcl"
   solver-version = 1
