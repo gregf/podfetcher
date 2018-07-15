@@ -5,10 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/caarlos0/gohome"
 	"github.com/jinzhu/gorm"
+	gohome "gopkg.in/caarlos0/gohome.v1"
+
 	// required by gorm
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 // Datastore interface
@@ -28,7 +29,7 @@ type Datastore interface {
 
 // DB struct
 type DB struct {
-	gorm.DB
+	*gorm.DB
 }
 
 const appName = "podfetcher"
