@@ -2,9 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -12,7 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb"
+	"code.cloudfoundry.org/bytefmt"
+	"github.com/cavaliercoder/grab"
 	"github.com/juju/deputy"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -48,21 +47,23 @@ func (env *Env) download(podcastTitle, episodeTitle, url string) {
 		env.db.SetDownloadedByURL(url)
 		return
 	}
+	s := false
 	fmt.Printf("Downloading: %s - %s\n", podcastTitle, episodeTitle)
 	if strings.Contains(strings.ToLower(url), "youtube.com") {
-		env.downloader(Params{url: getYoutubeURL(url), yturl: url, youtube: true})
+		s = env.downloader(Params{url: getYoutubeURL(url), yturl: url, youtube: true})
 	} else {
-		env.downloader(Params{url: url, youtube: false})
+		s = env.downloader(Params{url: url, youtube: false})
 	}
-	env.db.SetDownloadedByURL(url)
-	notify(podcastTitle, episodeTitle)
+	if s {
+		env.db.SetDownloadedByURL(url)
+		notify(podcastTitle, episodeTitle)
+	}
 }
 
 func run(cmdName string, cmdArgs []string) (cmdOut string) {
 	d := deputy.Deputy{
 		Errors:    deputy.FromStderr,
 		StdoutLog: func(b []byte) { cmdOut = string(b) },
-		Timeout:   time.Second * 30,
 	}
 	cmd := exec.Command(cmdName, cmdArgs...)
 	err := d.Run(cmd)
@@ -84,7 +85,7 @@ func notify(podcastTitle, episodeTitle string) {
 	run(cmdName, cmdArgs)
 }
 
-func (env *Env) downloader(p Params) {
+func (env *Env) downloader(p Params) bool {
 	var fileName string
 	var title string
 	if p.youtube {
@@ -101,66 +102,42 @@ func (env *Env) downloader(p Params) {
 	if err != nil {
 		log.Fatalf("mkdir failed %s\n", err)
 	}
-	/*
-		Create new file.
-		Filename from fileName variable
-	*/
-	file, err := os.Create(saveLoc)
+	// create client
+	client := grab.NewClient()
+	req, _ := grab.NewRequest(saveLoc, p.url)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+	// start download
+	resp := client.Do(req)
 
-	/*
-		check status and CheckRedirect
-	*/
-	checkStatus := http.Client{
-		CheckRedirect: func(r *http.Request, via []*http.Request) error {
-			r.URL.Opaque = r.URL.Path
-			return nil
-		},
-	}
+	// start UI loop
+	t := time.NewTicker(500 * time.Millisecond)
+	defer t.Stop()
 
-	/*
-		Get Response: 200 OK?
-	*/
-	response, err := checkStatus.Get(p.url)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer response.Body.Close()
-
-	/*
-		fileSize example: 12572 bytes
-	*/
-	filesize := response.ContentLength
-	go func() {
-		n, err := io.Copy(file, response.Body)
-		if n != filesize {
-			fmt.Println("Truncated")
+Loop:
+	for {
+		select {
+		case <-t.C:
+			fmt.Printf("\rTransfered %v / %v (%d%%) - %.0fKBp/s              ",
+				bytefmt.ByteSize(uint64(resp.BytesComplete())),
+				bytefmt.ByteSize(uint64(resp.Size)),
+				int(100*resp.Progress()),
+				resp.BytesPerSecond()/1024)
+		case <-resp.Done:
+			fmt.Printf("\rTransfered %v / %v (100%%) - 0KBp/s                 ",
+				bytefmt.ByteSize(uint64(resp.BytesComplete())),
+				bytefmt.ByteSize(uint64(resp.Size)))
+			// download is complete
+			break Loop
 		}
-		if err != nil {
-			fmt.Printf("Error: %v", err)
-		}
-	}()
-
-	countSize := int(filesize)
-	bar := pb.StartNew(countSize)
-	var fi os.FileInfo
-	for fi == nil || fi.Size() < filesize {
-		fi, _ = file.Stat()
-		bar.Set(int(fi.Size()))
-		bar.ShowBar = false
-		bar.ShowSpeed = true
-		bar.SetUnits(pb.U_BYTES)
 	}
 
-	if err != nil {
-		log.Fatal(err)
+	// check for errors
+	if err := resp.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "\nDownload failed: %v\n", err)
+		return false
 	}
 	fmt.Println("")
+	return true
 }
 
 func getYoutubeURL(url string) (yturl string) {
