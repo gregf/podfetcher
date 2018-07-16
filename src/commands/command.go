@@ -15,7 +15,7 @@ import (
 )
 
 // Podfetcher Version number
-const podFetcherVersion = "v0.4"
+const podFetcherVersion = "v0.5"
 
 // Env struct
 type Env struct {
