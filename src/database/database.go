@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -208,7 +209,7 @@ func (db *DB) CatchUp(id int) {
 func (db *DB) FindEpisodesWithPodcastTitle() (map[string][]string, error) {
 	rows, err := db.Table("Episodes").
 		Where("downloaded = ?", false).
-		Select("title, podcast_id").
+		Select("title, podcast_id, ID").
 		Rows()
 	if err != nil {
 		return nil, err
@@ -220,7 +221,8 @@ func (db *DB) FindEpisodesWithPodcastTitle() (map[string][]string, error) {
 		var eptitle string
 		var podcastID int
 		var title string
-		rows.Scan(&eptitle, &podcastID)
+		var ID int
+		rows.Scan(&eptitle, &podcastID, &ID)
 		row := db.Table("podcasts").
 			Where("id =?", podcastID).
 			Select("title").
@@ -232,7 +234,10 @@ func (db *DB) FindEpisodesWithPodcastTitle() (map[string][]string, error) {
 			return nil, nil
 		}
 
-		m[title] = append(m[title], eptitle)
+		pt := fmt.Sprintf("%d:%v", podcastID, title)
+		et := fmt.Sprintf("%d:%v", ID, eptitle)
+
+		m[pt] = append(m[pt], et)
 	}
 
 	return m, nil
