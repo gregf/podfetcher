@@ -8,7 +8,8 @@ go:
 
 os:
   - linux
-  - bsd
+  - freebsd
+  - osx
 
 matrix:
   allow_failures:
