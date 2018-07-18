@@ -38,6 +38,10 @@
   version = "2.0.0"
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/fredli74/lockfile"
+
+[[constraint]]
   name = "github.com/gilliek/go-opml"
   version = "1.0.0"
 

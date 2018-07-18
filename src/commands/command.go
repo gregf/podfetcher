@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
-	"syscall"
+	"path/filepath"
 
+	"github.com/fredli74/lockfile"
 	"github.com/gregf/podfetcher/src/database"
 
-	"github.com/nightlyone/lockfile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -24,12 +23,14 @@ type Env struct {
 
 // Execute parses command line args and fires up commands
 func Execute() {
-	lf := "/tmp/podfetcher.lock"
+	lf := filepath.Join(os.TempDir(), "podfetcher.lock")
 
 	initConfig()
-	createLock(lf)
-	defer unLock(lf)
-	trapInit(lf)
+	if lock, err := lockfile.Lock(lf); err != nil {
+		panic(err)
+	} else {
+		defer lock.Unlock()
+	}
 
 	db, err := database.NewDB()
 	if err != nil {
@@ -141,37 +142,4 @@ func initConfig() {
 		Setup()
 		return
 	}
-}
-
-func createLock(lockFile string) {
-	lock, err := lockfile.New(lockFile)
-	if err != nil {
-		log.Fatalf("Cannot init lock. reason: %v", err)
-	}
-
-	err = lock.TryLock()
-	if err != nil {
-		log.Fatalf("Podfetcher: %s\n", err)
-	}
-}
-
-func unLock(lockFile string) {
-	lock, err := lockfile.New(lockFile)
-	if err != nil {
-		log.Fatalf("Podfetcher: %s\n", err)
-	}
-
-	lock.Unlock()
-}
-
-func trapInit(lockFile string) {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	signal.Notify(c, syscall.SIGTERM)
-	go func() {
-		<-c
-		unLock(lockFile)
-		os.Exit(1)
-	}()
-
 }

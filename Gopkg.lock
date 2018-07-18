@@ -23,6 +23,12 @@
   version = "v2.0.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/fredli74/lockfile"
+  packages = ["."]
+  revision = "92f5e1efe5d6b3cdaabe557eb9d474912447be0e"
+
+[[projects]]
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
@@ -213,6 +219,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "97b83da9bcc3f40fff402a0415eac62a714ee88f0d261d59eee1d529c2846b34"
+  inputs-digest = "daa92927f5893741edc6ca233d55a8263962d34821bd66558c5d4ff658eac60a"
   solver-name = "gps-cdcl"
   solver-version = 1
