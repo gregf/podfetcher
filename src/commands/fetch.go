@@ -13,6 +13,7 @@ import (
 	"github.com/c2h5oh/datasize"
 	"github.com/cavaliercoder/grab"
 	"github.com/juju/deputy"
+	"github.com/kennygrant/sanitize"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -92,10 +93,10 @@ func (env *Env) downloader(p Params) bool {
 	var title string
 	if p.youtube {
 		fileName = getFileName(p.yturl, p.youtube)
-		title = makeTitle(env.db.FindPodcastTitleByURL(p.yturl))
+		title = sanitize.BaseName(env.db.FindPodcastTitleByURL(p.yturl))
 	} else {
 		fileName = getFileName(p.url, p.youtube)
-		title = makeTitle(env.db.FindPodcastTitleByURL(p.url))
+		title = sanitize.BaseName(env.db.FindPodcastTitleByURL(p.url))
 	}
 
 	dlDir := helpers.ExpandPath(viper.GetString("main.download"))
@@ -172,16 +173,4 @@ func getFileName(enclosureURL string, youtube bool) (filename string) {
 	filename = filepath.Base(url.Path)
 
 	return filename
-}
-
-func makeTitle(title string) (t string) {
-	title = strings.Replace(title, " ", "", -1)
-	title = strings.Replace(title, "%20", "", -1)
-	title = strings.Replace(title, "/", "-", -1)
-	title = strings.Replace(title, "\\", "-", -1)
-	title = strings.Replace(title, "'", "", -1)
-	title = strings.Replace(title, "\"", "", -1)
-	title = strings.Replace(title, ",", "", -1)
-
-	return title
 }

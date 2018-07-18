@@ -79,6 +79,12 @@
   revision = "5e10e7deaf1c0400371eadef102f28f82e5aaa53"
 
 [[projects]]
+  name = "github.com/kennygrant/sanitize"
+  packages = ["."]
+  revision = "2e6820834a1f36c626bf19a253b7d3cc060e9b8b"
+  version = "v1.2.3"
+
+[[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
   revision = "c2353362d570a7bfa228149c62842019201cfb71"
@@ -166,6 +172,15 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom"
+  ]
+  revision = "d0887baf81f4598189d4e12a37c6da86f0bba4d0"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
   revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
@@ -198,6 +213,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c9c810396aa8b6e763b899e4cfc36839b40fe29f2daf12cf27ee9a9e648fc50b"
+  inputs-digest = "97b83da9bcc3f40fff402a0415eac62a714ee88f0d261d59eee1d529c2846b34"
   solver-name = "gps-cdcl"
   solver-version = 1
