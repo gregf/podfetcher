@@ -35,10 +35,34 @@
   version = "v1.4.7"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/gen2brain/beeep"
+  packages = ["."]
+  revision = "4e430518395f1fa4d699f30e8d9420218dd311cd"
+
+[[projects]]
   name = "github.com/gilliek/go-opml"
   packages = ["opml"]
   revision = "d6574241cba8c59785768eb791bc384966e1177f"
   version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/godbus/dbus"
+  packages = ["."]
+  revision = "a389bdde4dd695d414e47b755e95e72b7826432c"
+  version = "v4.1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/gopherjs/gopherjs"
+  packages = ["js"]
+  revision = "0892b62f0d9fb5857760c3cfca837207185117ee"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/gopherjs/gopherwasm"
+  packages = ["js"]
+  revision = "0765e455aaf6485aba6462d42b1ee7afc2e4a82c"
 
 [[projects]]
   branch = "master"
@@ -127,9 +151,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/nightlyone/lockfile"
+  name = "github.com/nu7hatch/gouuid"
   packages = ["."]
-  revision = "0ad87eef1443f64d3d8c50da647e2b1552851124"
+  revision = "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
 
 [[projects]]
   name = "github.com/pelletier/go-toml"
@@ -188,7 +212,11 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+    "windows/registry"
+  ]
   revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [[projects]]
@@ -211,6 +239,12 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "v1"
+  name = "gopkg.in/toast.v1"
+  packages = ["."]
+  revision = "b700e246b8b6d3e13554091e540e1019e26389f1"
+
+[[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
@@ -219,6 +253,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "daa92927f5893741edc6ca233d55a8263962d34821bd66558c5d4ff658eac60a"
+  inputs-digest = "01225f2e906339b3a648187f33c892e81bf82bf8e3ae6fedee7645474ec05455"
   solver-name = "gps-cdcl"
   solver-version = 1

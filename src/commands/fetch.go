@@ -12,6 +12,7 @@ import (
 
 	"github.com/c2h5oh/datasize"
 	"github.com/cavaliercoder/grab"
+	"github.com/gen2brain/beeep"
 	"github.com/juju/deputy"
 	"github.com/kennygrant/sanitize"
 	"github.com/spf13/cobra"
@@ -77,15 +78,10 @@ func run(cmdName string, cmdArgs []string) (cmdOut string) {
 }
 
 func notify(msg string) {
-	cmdName := viper.GetString("main.notify-program")
-	cmdArgs := []string{
-		"podfetcher:",
-		fmt.Sprintf("%s", msg),
+	err := beeep.Notify("Podfetcher", msg, "")
+	if err != nil {
+		panic(err)
 	}
-	if len(cmdName) <= 0 {
-		return
-	}
-	run(cmdName, cmdArgs)
 }
 
 func (env *Env) downloader(p Params) bool {

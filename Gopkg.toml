@@ -42,6 +42,10 @@
   name = "github.com/fredli74/lockfile"
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/gen2brain/beeep"
+
+[[constraint]]
   name = "github.com/gilliek/go-opml"
   version = "1.0.0"
 
@@ -60,10 +64,6 @@
 [[constraint]]
   branch = "master"
   name = "github.com/mattn/go-pkg-rss"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/nightlyone/lockfile"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
