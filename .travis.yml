@@ -1,18 +1,23 @@
+go_import_path: github.com/gregf/podfetcher
+
 language: go
 go:
-  - 1.10
-sudo: false
-before_install:
-  - gotools=golang.org/x/tools
-  - if [ "$TRAVIS_GO_VERSION" = "release" ]; then gotools=code.google.com/p/go.tools; fi
-install:
-  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
-  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
-  - go get -d -t -v ./...
-  - go get -v $gotools/cmd/cover
-  - go get -v $gotools/cmd/vet
-  - go get -v github.com/bradfitz/goimports
-  - go get -v github.com/golang/lint/golint
+  - 1.9.x
+  - 1.10.x
+  - tip
+
+os:
+  - linux
+  - bsd
+
+matrix:
+  allow_failures:
+    - go: tip
+  fast_finish: true
+
 script:
-  - export PATH=$PATH:$HOME/gopath/bin
-  - ./scripts/goclean.sh
+  - go install ./...
+  - diff -u <(echo -n) <(gofmt -d .)
+  - go test -v ./...
+
+sudo: false
