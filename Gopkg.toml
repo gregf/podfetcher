@@ -27,11 +27,11 @@
 
 [[constraint]]
   branch = "master"
-  name = "code.cloudfoundry.org/bytefmt"
+  name = "github.com/apcera/termtables"
 
 [[constraint]]
   branch = "master"
-  name = "github.com/apcera/termtables"
+  name = "github.com/c2h5oh/datasize"
 
 [[constraint]]
   name = "github.com/cavaliercoder/grab"

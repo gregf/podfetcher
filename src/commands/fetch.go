@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"code.cloudfoundry.org/bytefmt"
+	"github.com/c2h5oh/datasize"
 	"github.com/cavaliercoder/grab"
 	"github.com/juju/deputy"
 	"github.com/spf13/cobra"
@@ -119,15 +119,15 @@ Loop:
 	for {
 		select {
 		case <-t.C:
-			fmt.Printf("\rTransfered %v / %v (%d%%) - %.0fKBp/s              ",
-				bytefmt.ByteSize(uint64(resp.BytesComplete())),
-				bytefmt.ByteSize(uint64(resp.Size)),
+			fmt.Printf("\rTransfered %v / %v (%d%%) - %.0fKBp/s  ",
+				datasize.ByteSize(resp.BytesComplete()).HumanReadable(),
+				datasize.ByteSize(resp.Size).HumanReadable(),
 				int(100*resp.Progress()),
 				resp.BytesPerSecond()/1024)
 		case <-resp.Done:
-			fmt.Printf("\rTransfered %v / %v (100%%) - 0KBp/s                 ",
-				bytefmt.ByteSize(uint64(resp.BytesComplete())),
-				bytefmt.ByteSize(uint64(resp.Size)))
+			fmt.Printf("\rTransfered %v / %v (100%%) - 0KBp/s  ",
+				datasize.ByteSize(resp.BytesComplete()).HumanReadable(),
+				datasize.ByteSize(resp.Size).HumanReadable())
 			// download is complete
 			break Loop
 		}

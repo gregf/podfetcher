@@ -3,18 +3,18 @@
 
 [[projects]]
   branch = "master"
-  name = "code.cloudfoundry.org/bytefmt"
-  packages = ["."]
-  revision = "b31f603f5e1e047fdb38584e1a922dcc5c4de5c8"
-
-[[projects]]
-  branch = "master"
   name = "github.com/apcera/termtables"
   packages = [
     ".",
     "term"
   ]
   revision = "bcbc5dc54055d14996b256d348fb75cc6debe282"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/c2h5oh/datasize"
+  packages = ["."]
+  revision = "4eba002a5eaea69cf8d235a388fc6b65ae68d2dd"
 
 [[projects]]
   name = "github.com/cavaliercoder/grab"
@@ -198,6 +198,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0eace6cdf8ea8ffdaca2af83016570d0444d45d533822c0cd0687c341ed5a4e2"
+  inputs-digest = "c9c810396aa8b6e763b899e4cfc36839b40fe29f2daf12cf27ee9a9e648fc50b"
   solver-name = "gps-cdcl"
   solver-version = 1
