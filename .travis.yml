@@ -8,7 +8,6 @@ go:
 
 os:
   - linux
-  - freebsd
   - osx
 
 matrix:
