@@ -59,10 +59,10 @@
   revision = "0892b62f0d9fb5857760c3cfca837207185117ee"
 
 [[projects]]
-  branch = "master"
   name = "github.com/gopherjs/gopherwasm"
   packages = ["js"]
-  revision = "0765e455aaf6485aba6462d42b1ee7afc2e4a82c"
+  revision = "f02b5938d19774383abccdfe0271e1a40651b4ad"
+  version = "v0.1.1"
 
 [[projects]]
   branch = "master"
@@ -135,7 +135,8 @@
 [[projects]]
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
-  revision = "14207d285c6c197daabb5c9793d63e7af9ab2d50"
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
 
 [[projects]]
   name = "github.com/mattn/go-sqlite3"
@@ -207,7 +208,7 @@
     "html",
     "html/atom"
   ]
-  revision = "d0887baf81f4598189d4e12a37c6da86f0bba4d0"
+  revision = "3673e40ba22529d22c3fd7c93e97b0ce50fa7bdd"
 
 [[projects]]
   branch = "master"
@@ -217,7 +218,7 @@
     "windows",
     "windows/registry"
   ]
-  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
+  revision = "e072cadbbdc8dd3d3ffa82b8b4b9304c261d9311"
 
 [[projects]]
   name = "golang.org/x/text"

@@ -72,7 +72,7 @@ func run(cmdName string, cmdArgs []string) (cmdOut string) {
 	cmd := exec.Command(cmdName, cmdArgs...)
 	err := d.Run(cmd)
 	if err != nil {
-		log.Fatal(err)
+		log.Warn(err)
 	}
 	return cmdOut
 }
