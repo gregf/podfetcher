@@ -9,6 +9,14 @@ before:
 builds:
 - env:
   - CGO_ENABLED=0
+goos:
+    - freebsd
+    - netbsd
+    - openbsd
+    - linux
+goarch:
+    - amd64
+    - i386
 archive:
   replacements:
     darwin: Darwin
