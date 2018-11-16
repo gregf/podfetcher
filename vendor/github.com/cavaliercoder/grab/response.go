@@ -104,7 +104,7 @@ func (c *Response) IsComplete() bool {
 	}
 }
 
-// Cancel cancels the file transfer by cancelling the underlying Context for
+// Cancel cancels the file transfer by canceling the underlying Context for
 // this Response. Cancel blocks until the transfer is closed and returns any
 // error - typically context.Canceled.
 func (c *Response) Cancel() error {
@@ -207,4 +207,18 @@ func (c *Response) watchBps() {
 			c.bytesPerSecondMu.Unlock()
 		}
 	}
+}
+
+func (c *Response) requestMethod() string {
+	if c == nil || c.HTTPResponse == nil || c.HTTPResponse.Request == nil {
+		return ""
+	}
+	return c.HTTPResponse.Request.Method
+}
+
+func (c *Response) closeResponseBody() error {
+	if c.HTTPResponse == nil || c.HTTPResponse.Body == nil {
+		return nil
+	}
+	return c.HTTPResponse.Body.Close()
 }

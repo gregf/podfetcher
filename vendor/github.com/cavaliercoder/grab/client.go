@@ -264,36 +264,27 @@ func (c *Client) checksumFile(resp *Response) stateFunc {
 	if resp.Request.hash == nil {
 		return c.closeResponse
 	}
-
 	if resp.Filename == "" {
 		panic("filename not set")
 	}
-
-	// open downloaded file
-	f, err := os.Open(resp.Filename)
-	if err != nil {
-		resp.err = err
-		return c.closeResponse
-	}
-	defer f.Close()
-
-	// hash file
-	t := newTransfer(resp.Request.Context(), nil, resp.Request.hash, f, nil)
-	if nc, err := t.copy(); err != nil {
-		resp.err = err
-		return c.closeResponse
-	} else if nc != resp.Size {
-		resp.err = ErrBadLength
-		return c.closeResponse
-	}
+	req := resp.Request
 
 	// compare checksum
-	sum := resp.Request.hash.Sum(nil)
-	if !bytes.Equal(sum, resp.Request.checksum) {
-		if resp.Request.deleteOnError {
-			os.Remove(resp.Filename)
-		}
+	var sum []byte
+	sum, resp.err = checksum(req.Context(), resp.Filename, req.hash)
+	if resp.err != nil {
+		return c.closeResponse
+	}
+	if !bytes.Equal(sum, req.checksum) {
 		resp.err = ErrBadChecksum
+		if req.deleteOnError {
+			if err := os.Remove(resp.Filename); err != nil {
+				// err should be os.PathError and include file path
+				resp.err = fmt.Errorf(
+					"cannot remove downloaded file with checksum mismatch: %v",
+					err)
+			}
+		}
 	}
 	return c.closeResponse
 }
@@ -329,6 +320,12 @@ func (c *Client) headRequest(resp *Response) stateFunc {
 	if resp.err != nil {
 		return c.closeResponse
 	}
+	resp.HTTPResponse.Body.Close()
+
+	if resp.HTTPResponse.StatusCode != http.StatusOK {
+		return c.getRequest
+	}
+
 	return c.readResponse
 }
 
@@ -337,20 +334,21 @@ func (c *Client) getRequest(resp *Response) stateFunc {
 	if resp.err != nil {
 		return c.closeResponse
 	}
+
+	// check status code
+	if !resp.Request.IgnoreBadStatusCodes {
+		if resp.HTTPResponse.StatusCode < 200 || resp.HTTPResponse.StatusCode > 299 {
+			resp.err = StatusCodeError(resp.HTTPResponse.StatusCode)
+			return c.closeResponse
+		}
+	}
+
 	return c.readResponse
 }
 
 func (c *Client) readResponse(resp *Response) stateFunc {
 	if resp.HTTPResponse == nil {
 		panic("Response.HTTPResponse is not ready")
-	}
-
-	// check status code
-	if !resp.Request.IgnoreBadStatusCodes {
-		if resp.HTTPResponse.StatusCode < 200 || resp.HTTPResponse.StatusCode > 299 {
-			resp.err = ErrBadStatusCode
-			return c.closeResponse
-		}
 	}
 
 	// check expected size
@@ -371,14 +369,12 @@ func (c *Client) readResponse(resp *Response) stateFunc {
 		}
 		// Request.Filename will be empty or a directory
 		resp.Filename = filepath.Join(resp.Request.Filename, filename)
-		return c.statFileInfo
 	}
 
-	if resp.HTTPResponse.Header.Get("Accept-Ranges") == "bytes" {
-		resp.CanResume = true
-	}
-
-	if resp.HTTPResponse.Request.Method == "HEAD" {
+	if resp.requestMethod() == "HEAD" {
+		if resp.HTTPResponse.Header.Get("Accept-Ranges") == "bytes" {
+			resp.CanResume = true
+		}
 		return c.statFileInfo
 	}
 	return c.openWriter
@@ -447,8 +443,8 @@ func (c *Client) copyFile(resp *Response) stateFunc {
 	}
 
 	// run BeforeCopy hook
-	if resp.Request.BeforeCopy != nil {
-		resp.err = resp.Request.BeforeCopy(resp)
+	if f := resp.Request.BeforeCopy; f != nil {
+		resp.err = f(resp)
 		if resp.err != nil {
 			return c.closeResponse
 		}
@@ -458,17 +454,36 @@ func (c *Client) copyFile(resp *Response) stateFunc {
 		panic("developer error: Response.transfer is not initialized")
 	}
 	go resp.watchBps()
-	if _, resp.err = resp.transfer.copy(); resp.err != nil {
+	_, resp.err = resp.transfer.copy()
+	if resp.err != nil {
 		return c.closeResponse
 	}
+	closeWriter(resp)
 
 	// set timestamp
 	if !resp.Request.IgnoreRemoteTime {
-		if resp.err = setLastModified(resp.HTTPResponse, resp.Filename); resp.err != nil {
+		resp.err = setLastModified(resp.HTTPResponse, resp.Filename)
+		if resp.err != nil {
 			return c.closeResponse
 		}
 	}
+
+	// run AfterCopy hook
+	if f := resp.Request.AfterCopy; f != nil {
+		resp.err = f(resp)
+		if resp.err != nil {
+			return c.closeResponse
+		}
+	}
+
 	return c.checksumFile
+}
+
+func closeWriter(resp *Response) {
+	if resp.writer != nil {
+		resp.writer.Close()
+		resp.writer = nil
+	}
 }
 
 // close finalizes the Response
@@ -478,18 +493,14 @@ func (c *Client) closeResponse(resp *Response) stateFunc {
 	}
 
 	resp.fi = nil
-	if resp.writer != nil {
-		resp.writer.Close()
-		resp.writer = nil
-	}
-	if resp.HTTPResponse != nil && resp.HTTPResponse.Body != nil {
-		resp.HTTPResponse.Body.Close()
-	}
+	closeWriter(resp)
+	resp.closeResponseBody()
 
 	resp.End = time.Now()
 	close(resp.Done)
 	if resp.cancel != nil {
 		resp.cancel()
 	}
+
 	return nil
 }
