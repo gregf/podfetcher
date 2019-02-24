@@ -145,6 +145,8 @@ func getYoutubeURL(url string) (yturl string) {
 		"--format",
 		viper.GetString("main.youtube-quality"),
 		"--get-url",
+		"--skip-unavailable-fragments",
+		"--youtube-skip-dash-manifest",
 		url}
 	cmdOut := run(cmdName, cmdArgs)
 	yturl = strings.Split(string(cmdOut), "\n")[0]
